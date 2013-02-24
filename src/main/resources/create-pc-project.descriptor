@@ -1,0 +1,69 @@
+{
+  "moduleName": "DSPCommon",
+  "svnPath": "file:///C:/Users/ssledz/svn-repository/dspcommon/trunk/modules",
+  "svnCheckoutPath": "\\modules",
+  "buildXmlPath": "\\modules\\ant\\build-common.xml",
+  "tasks": [
+    {
+      "task": "CheckoutTask"
+    },
+    {
+      "task": "AntTask",
+      "arg": "push-common-into-products"
+    }
+  ],
+  "parent": {
+    "moduleName": "PolicyCenter",
+    "svnPath": "file:///C:/Users/ssledz/svn-repository/pc/trunk/modules/configuration",
+    "svnCheckoutPath": "\\modules\\configuration",
+    "moduleDownloadUrl": "http://localhost:8080/pc-repository/PolicyCenter7.0.6.zip",
+    "buildXmlPath": "\\modules\\ant\\build.xml",
+    "tasks": [
+      {
+        "task": "DownloadTask"
+      },
+      {
+        "task": "UnzipTask"
+      },
+      {
+        "task": "CheckoutTask"
+      }
+    ],
+    "parent": {
+      "moduleName": "BillingCenter",
+      "svnPath": "file:///C:/Users/ssledz/svn-repository/bc/trunk/modules/configuration",
+      "svnCheckoutPath": "\\modules\\configuration",
+      "moduleDownloadUrl": "http://localhost:8080/pc-repository/BillingCenter7.0.2_patch_1_2.zip",
+      "buildXmlPath": "\\modules\\ant\\build.xml",
+      "tasks": [
+        {
+          "task": "DownloadTask"
+        },
+        {
+          "task": "UnzipTask"
+        },
+        {
+          "task": "CheckoutTask"
+        }
+      ],
+      "parent": {
+        "moduleName": "ContactManager",
+        "svnPath": "file:///C:/Users/ssledz/svn-repository/cm/trunk/modules/configuration",
+        "svnCheckoutPath": "\\modules\\configuration",
+        "moduleDownloadUrl": "http://localhost:8080/pc-repository/ContactManager7.0.3.zip",
+        "buildXmlPath": "\\modules\\ant\\build.xml",
+        "tasks": [
+          {
+            "task": "DownloadTask"
+          },
+          {
+            "task": "UnzipTask"
+          },
+          {
+            "task": "CheckoutTask"
+          }
+        ]
+      }
+    }
+  }
+}

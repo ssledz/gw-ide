@@ -15,6 +15,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+import pl.softech.gw.Utils;
 
 /**
  *
@@ -35,27 +36,6 @@ public class Unzip {
     }
 
     
-    private void cp(InputStream in, OutputStream out) throws IOException {
-        byte[] buffer = new byte[1024];
-        int cnt;
-
-        try {
-            while ((cnt = in.read(buffer)) >= 0) {
-                out.write(buffer, 0, cnt);
-            }
-
-        } finally {
-            if (in != null) {
-                in.close();
-            }
-            if (out != null) {
-                out.close();
-            }
-        }
-
-
-    }
-
     public void unzipFile(File file, File dir) throws IOException {
 
         Enumeration entries;
@@ -75,8 +55,7 @@ public class Unzip {
                     (new File(dir, entry.getName())).mkdir();
                     continue;
                 }
-                
-                cp(zipFile.getInputStream(entry),
+                Utils.copy(zipFile.getInputStream(entry),
                         new BufferedOutputStream(new FileOutputStream(new File(dir, entry.getName()))));
             }
 

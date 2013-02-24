@@ -1,5 +1,9 @@
 package pl.softech.gw.pmodule;
 
+import pl.softech.gw.json.JsonExclusionStrategy;
+import pl.softech.gw.json.JsonExclude;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
@@ -10,6 +14,7 @@ import pl.softech.gw.Utils;
 import pl.softech.gw.ant.AntTaskExecutorFactory;
 import pl.softech.gw.ant.IAntTaskExecutor;
 import pl.softech.gw.download.ResourceDownloader;
+import pl.softech.gw.json.GsonUtils;
 import pl.softech.gw.svn.SvnTool;
 import pl.softech.gw.zip.Unzip;
 
@@ -27,9 +32,13 @@ public class ProjectModule {
     private final String buildXmlPath;
     private ProjectModule parent;
     private List<Runnable> tasks;
+    @JsonExclude
     private SvnTool svnTool;
+    @JsonExclude
     private ResourceDownloader downloader;
+    @JsonExclude
     private Unzip unzipTool;
+    @JsonExclude
     private AntTaskExecutorFactory antTaskExecutorFactory;
 
     public ProjectModule(File projectDir, String moduleName, String svnPath, String moduleDownloadUrl, String svnCheckoutPath, String buildXmlPath) {
@@ -69,10 +78,16 @@ public class ProjectModule {
     Runnable createAntTask(final String target) {
 
         return new Runnable() {
+            
             @Override
             public void run() {
                 IAntTaskExecutor a = antTaskExecutorFactory.create(new File(getModuleDir(), buildXmlPath));
                 a.execute(target);
+            }
+
+            @Override
+            public String toString() {
+                return String.format("AntTask[%s]", target);
             }
         };
     }
@@ -92,6 +107,11 @@ public class ProjectModule {
                     throw new RuntimeException(ex);
                 }
 
+            }
+
+            @Override
+            public String toString() {
+                return "DownloadModuleTask";
             }
         };
     }
@@ -118,6 +138,11 @@ public class ProjectModule {
                     throw new RuntimeException(ex);
                 }
             }
+
+            @Override
+            public String toString() {
+                return "UnzipTask";
+            }
         };
 
     }
@@ -140,6 +165,11 @@ public class ProjectModule {
                     throw new RuntimeException(ex);
                 }
             }
+
+            @Override
+            public String toString() {
+                return "CheckoutTask";
+            }
         };
 
     }
@@ -158,6 +188,11 @@ public class ProjectModule {
                 } catch (SVNException ex) {
                     throw new RuntimeException(ex);
                 }
+            }
+
+            @Override
+            public String toString() {
+                return "UpdateTask";
             }
         };
 
@@ -181,7 +216,7 @@ public class ProjectModule {
 
     @Override
     public String toString() {
-        return "ProjectModule{" + "moduleName=" + moduleName + ", parent=" + parent + '}';
+        return GsonUtils.createGson().toJson(this);
     }
 
     public static File createCheckoutDir(File projectDir, String moduleName, String checkoutPath) {

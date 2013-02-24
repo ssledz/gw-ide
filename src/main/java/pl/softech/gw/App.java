@@ -1,9 +1,12 @@
 package pl.softech.gw;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import pl.softech.gw.pmodule.ProjectModule;
 import pl.softech.gw.pmodule.ProjectModuleBuilder;
 import pl.softech.gw.zip.Unzip;
 import java.io.File;
+import java.io.InputStream;
 import org.apache.tools.ant.BuildEvent;
 import pl.softech.gw.ant.AntTaskExecutorFactory;
 import pl.softech.gw.ant.BuildListenerAdapter;
@@ -11,6 +14,8 @@ import pl.softech.gw.download.BytesReceivedEvent;
 import pl.softech.gw.download.IDownloadActionListener;
 import pl.softech.gw.download.IDownloadEvent;
 import pl.softech.gw.download.ResourceDownloader;
+import pl.softech.gw.pmodule.ProjectConfiguration;
+import pl.softech.gw.pmodule.ProjectModuleFactory;
 import pl.softech.gw.svn.ISvnActionListener;
 import pl.softech.gw.svn.ISvnEvent;
 import pl.softech.gw.svn.SvnTool;
@@ -221,8 +226,27 @@ public class App {
         System.out.println(pc.toString());
         pc.execute();
     }
+    
+    private static void app4() throws Exception {
+        
+        InputStream in = App.class.getClassLoader().getResourceAsStream("create-pc-project.descriptor");
+        String conf = Utils.readInputStreamAsString(in, "UTF-8");
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        ProjectConfiguration pmc = gson.fromJson(conf, ProjectConfiguration.class);
+        System.out.println(gson.toJson(pmc));
+        
+    }
+    
+    private static void app5() throws Exception {
+        
+        ProjectModuleFactory projectModuleFactory = new ProjectModuleFactory(svn, downloader, unzip, antTaskExecutorFactory);
+        File projectDir = new File("C:\\Users\\ssledz\\development-workspace\\tmp\\pc-project2");
+        ProjectModule pc = projectModuleFactory.create(projectDir, "create-pc-project.descriptor");
+        System.out.println(pc.toString());
+        
+    }
 
     public static void main(String[] args) throws Exception {
-        app3();
+        app5();
     }
 }
