@@ -149,15 +149,13 @@ public class App {
         builder.setSvnCheckoutPath("\\modules");
         builder.setCreateCheckoutTask(true);
         
-        
         builder.setModuleName("DSPCommon");
         builder.setSvnPath("file:///C:/Users/ssledz/svn-repository/dspcommon/trunk/modules");
         
+        builder = builder.createParent();
         builder.setCreateDownloadTask(true);
         builder.setCreateUnzipTask(true);
         builder.setSvnCheckoutPath("\\modules\\configuration");
-
-        builder = builder.createParent();
         builder.setModuleName("PolicyCenter");
         builder.setModuleDownloadUrl("http://localhost:8080/pc-repository/PolicyCenter7.0.6.zip");
         builder.setSvnPath("file:///C:/Users/ssledz/svn-repository/pc/trunk/modules/configuration");
