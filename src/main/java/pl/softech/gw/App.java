@@ -2,11 +2,6 @@ package pl.softech.gw;
 
 import pl.softech.gw.zip.Unzip;
 import java.io.File;
-import java.io.IOException;
-import org.apache.tools.ant.BuildEvent;
-import org.apache.tools.ant.DefaultLogger;
-import pl.softech.gw.ant.AntTaskExecutor;
-import pl.softech.gw.ant.BuildListenerAdapter;
 import pl.softech.gw.download.BytesReceivedEvent;
 import pl.softech.gw.download.IDownloadActionListener;
 import pl.softech.gw.download.IDownloadEvent;
@@ -27,96 +22,13 @@ import pl.softech.gw.zip.UnzipPathEvent;
  */
 public class App {
 
-    private static void app1() throws IOException {
+    private static SvnTool svn;
+    private static ResourceDownloader downloader;
+    private static Unzip unzip;
 
-        ResourceDownloader downloader = new ResourceDownloader();
-        downloader.addDownloadActionListener(new IDownloadActionListener() {
-            int cnt = 0;
+    private static void init() {
 
-            @Override
-            public void actionPerformed(IDownloadEvent event) {
-
-                if (event instanceof BytesReceivedEvent) {
-                    BytesReceivedEvent e = (BytesReceivedEvent) event;
-                    cnt += e.getReceived();
-                    System.out.println((cnt * 100 / e.getAll()) + "% -> " + e.getFileName());
-                }
-
-            }
-        });
-
-        File dir = new File("C:\\Users\\ssledz\\development-workspace\\tmp");
-
-        downloader.download("http://localhost:8080/pc-repository/apache-ant-1.8.4-bin.zip", dir, "apache-ant-1.8.4-bin.zip");
-
-        File file = new File(dir, "apache-ant-1.8.4-bin.zip");
-        Unzip unzip = new Unzip();
-        unzip.addZipActionListener(new IZipActionListener() {
-            @Override
-            public void actionPerformed(IZipEvent event) {
-
-                if (event instanceof UnzipPathEvent) {
-
-                    System.out.println("Extracting: " + ((UnzipPathEvent) event).getPath());
-                }
-
-
-            }
-        });
-
-        unzip.unzipFile(file, dir);
-
-    }
-
-    private static void app2() throws IOException {
-        System.out.println("app2");
-        AntTaskExecutor te = new AntTaskExecutor(new File("C:\\Users\\ssledz\\development-workspace\\tmp\\build.xml"));
-
-        DefaultLogger consoleLogger = new DefaultLogger();
-        consoleLogger.setErrorPrintStream(System.err);
-        consoleLogger.setOutputPrintStream(System.out);
-//        consoleLogger.setMessageOutputLevel(Project.MSG_INFO);
-
-//        te.addBuildListener(consoleLogger);
-        te.addBuildListener(new BuildListenerAdapter() {
-            @Override
-            public void messageLogged(BuildEvent event) {
-                System.out.println("[" + (event.getTarget() != null ? event.getTarget().getName() : "null") + "] " + event.getMessage());
-            }
-        });
-        te.execute("do1");
-
-    }
-
-    private static void app3() throws Exception {
-
-        File file = new File("C:\\Users\\ssledz\\development-workspace\\tmp\\sample1");
-//        SvnHelper.checkout("file:///C:/Users/ssledz/development-workspace/tmp/repository/sample-project", file);
-        SvnTool svn = new SvnTool();
-        svn.addSvnActionListener(new ISvnActionListener() {
-            @Override
-            public void actionPerformed(ISvnEvent event) {
-                if (event instanceof SvnUpdateEvent) {
-
-                    System.out.println("Updating: " + ((SvnUpdateEvent) event).getFile().getAbsoluteFile());
-                }
-
-                if (event instanceof SvnAddEvent) {
-
-                    System.out.println("Adding: " + ((SvnUpdateEvent) event).getFile().getAbsoluteFile());
-                }
-
-                if (event instanceof SvnUpdateCompletedEvent) {
-                    System.out.println("Svn task comleted");
-                }
-            }
-        });
-        svn.update(file);
-    }
-
-    private static void app4() throws Exception {
-
-        SvnTool svn = new SvnTool();
+        svn = new SvnTool();
         svn.addSvnActionListener(new ISvnActionListener() {
             @Override
             public void actionPerformed(ISvnEvent event) {
@@ -136,7 +48,7 @@ public class App {
             }
         });
 
-        ResourceDownloader downloader = new ResourceDownloader();
+        downloader = new ResourceDownloader();
         downloader.addDownloadActionListener(new IDownloadActionListener() {
             double cnt = 0;
 
@@ -152,7 +64,7 @@ public class App {
             }
         });
 
-        Unzip unzip = new Unzip();
+        unzip = new Unzip();
         unzip.addZipActionListener(new IZipActionListener() {
             @Override
             public void actionPerformed(IZipEvent event) {
@@ -165,6 +77,12 @@ public class App {
 
             }
         });
+
+    }
+
+    private static void app1() throws Exception {
+
+        init();
 
         File projectDir = new File("C:\\Users\\ssledz\\development-workspace\\tmp\\pc-project");
 
@@ -195,11 +113,9 @@ public class App {
         ProjectModule pc = builder.build();
         System.out.println(pc.toString());
         pc.create();
-
-
     }
 
     public static void main(String[] args) throws Exception {
-        app4();
+        app1();
     }
 }
