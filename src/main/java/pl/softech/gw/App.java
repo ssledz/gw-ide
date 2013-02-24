@@ -82,9 +82,11 @@ public class App {
 
     }
 
-    private static void app1() throws Exception {
-
+    static {
         init();
+    }
+    
+    private static void app1() throws Exception {
 
         File projectDir = new File("C:\\Users\\ssledz\\development-workspace\\tmp\\pc-project");
 
@@ -117,7 +119,65 @@ public class App {
         pc.create();
     }
 
+    private static void app2() throws Exception {
+        
+        File projectDir = new File("C:\\Users\\ssledz\\development-workspace\\tmp\\pc-project");
+
+        ProjectModuleBuilder builder = new ProjectModuleBuilder();
+        builder.setSvnTool(svn);
+        builder.setUnzipTool(unzip);
+        builder.setProjectDir(projectDir);
+        builder.setSvnCheckoutPath("\\modules");
+        builder.setCreateCheckoutTask(true);
+        
+        builder.setModuleName("DSPCommon");
+        builder.setSvnPath("file:///C:/Users/ssledz/svn-repository/dspcommon/trunk/modules");
+        
+        builder.build().create();
+        
+    }
+    
+        private static void app3() throws Exception {
+
+        File projectDir = new File("C:\\Users\\ssledz\\development-workspace\\tmp\\pc-project2");
+
+        ProjectModuleBuilder builder = new ProjectModuleBuilder();
+        builder.setDownloader(downloader);
+        builder.setSvnTool(svn);
+        builder.setUnzipTool(unzip);
+        builder.setProjectDir(projectDir);
+        builder.setSvnCheckoutPath("\\modules");
+        builder.setCreateCheckoutTask(true);
+        
+        
+        builder.setModuleName("DSPCommon");
+        builder.setSvnPath("file:///C:/Users/ssledz/svn-repository/dspcommon/trunk/modules");
+        
+        builder.setCreateDownloadTask(true);
+        builder.setCreateUnzipTask(true);
+        builder.setSvnCheckoutPath("\\modules\\configuration");
+
+        builder = builder.createParent();
+        builder.setModuleName("PolicyCenter");
+        builder.setModuleDownloadUrl("http://localhost:8080/pc-repository/PolicyCenter7.0.6.zip");
+        builder.setSvnPath("file:///C:/Users/ssledz/svn-repository/pc/trunk/modules/configuration");
+
+        builder = builder.createParent();
+        builder.setModuleName("BillingCenter");
+        builder.setModuleDownloadUrl("http://localhost:8080/pc-repository/BillingCenter7.0.2_patch_1_2.zip");
+        builder.setSvnPath("file:///C:/Users/ssledz/svn-repository/bc/trunk/modules/configuration");
+
+        builder = builder.createParent();
+        builder.setModuleName("ContactManager");
+        builder.setModuleDownloadUrl("http://localhost:8080/pc-repository/ContactManager7.0.3.zip");
+        builder.setSvnPath("file:///C:/Users/ssledz/svn-repository/cm/trunk/modules/configuration");
+
+        ProjectModule pc = builder.build();
+        System.out.println(pc.toString());
+        pc.create();
+    }
+    
     public static void main(String[] args) throws Exception {
-        app1();
+        app3();
     }
 }
