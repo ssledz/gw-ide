@@ -5,6 +5,9 @@
 package pl.softech.gw.pmodule;
 
 import java.io.File;
+import java.util.LinkedList;
+import java.util.List;
+import pl.softech.gw.ant.AntTaskExecutorFactory;
 import pl.softech.gw.download.ResourceDownloader;
 import pl.softech.gw.svn.SvnTool;
 import pl.softech.gw.zip.Unzip;
@@ -18,53 +21,99 @@ public class ProjectModuleBuilder {
     private SvnTool svnTool;
     private ResourceDownloader downloader;
     private Unzip unzipTool;
+    private AntTaskExecutorFactory antTaskExecutorFactory;
+    
     private File projectDir;
     private String moduleName;
     private String svnPath;
     private String svnCheckoutPath;
     private String moduleDownloadUrl;
+    private String buildXmlPath;
     private ProjectModuleBuilder child;
     ProjectModule projectModule;
-    
-    private boolean isCreateCheckoutTask;
-    private boolean isCreateDownloadTask;
-    private boolean isCreateUnzipTask;
+    private List<Runnable> tasks;
 
     public ProjectModuleBuilder() {
+        tasks = new LinkedList<Runnable>();
     }
 
     private ProjectModuleBuilder(ProjectModuleBuilder child) {
+        this();
         this.child = child;
         this.svnTool = child.svnTool;
         this.downloader = child.downloader;
         this.unzipTool = child.unzipTool;
         this.projectDir = child.projectDir;
         this.svnCheckoutPath = child.svnCheckoutPath;
-        this.isCreateCheckoutTask = child.isCreateCheckoutTask;
-        this.isCreateDownloadTask = child.isCreateDownloadTask;
-        this.isCreateUnzipTask = child.isCreateUnzipTask;
+        this.antTaskExecutorFactory = child.antTaskExecutorFactory;
     }
 
+    public ProjectModuleBuilder setAntTaskExecutorFactory(AntTaskExecutorFactory antTaskExecutorFactory) {
+        this.antTaskExecutorFactory = antTaskExecutorFactory;
+        return this;
+    }
+    
     public ProjectModuleBuilder setSvnCheckoutPath(String svnCheckoutPath) {
         this.svnCheckoutPath = svnCheckoutPath;
         return this;
     }
 
-    public ProjectModuleBuilder setCreateCheckoutTask(boolean isCreateCheckoutTask) {
-        this.isCreateCheckoutTask = isCreateCheckoutTask;
-        return this;
+    public void setBuildXmlPath(String buildXmlPath) {
+        this.buildXmlPath = buildXmlPath;
     }
+    
+    public ProjectModuleBuilder createCheckoutTask() {
 
-    public ProjectModuleBuilder setCreateDownloadTask(boolean isCreateDownloadTask) {
-        this.isCreateDownloadTask = isCreateDownloadTask;
-        return this;
-    }
-
-    public ProjectModuleBuilder setCreateUnzipTask(boolean isCreateUnzipTask) {
-        this.isCreateUnzipTask = isCreateUnzipTask;
+        tasks.add(new Runnable() {
+            @Override
+            public void run() {
+                projectModule.addTask(projectModule.createCheckoutTask());
+            }
+        });
         return this;
     }
     
+    public ProjectModuleBuilder createAntTask(final String target) {
+
+        tasks.add(new Runnable() {
+            @Override
+            public void run() {
+                projectModule.addTask(projectModule.createAntTask(target));
+            }
+        });
+        return this;
+    }
+
+    public ProjectModuleBuilder createDownloadTask() {
+        tasks.add(new Runnable() {
+            @Override
+            public void run() {
+                projectModule.addTask(projectModule.createDownloadModuleTask());
+            }
+        });
+        return this;
+    }
+
+    public ProjectModuleBuilder createUnzipTask() {
+        tasks.add(new Runnable() {
+            @Override
+            public void run() {
+                projectModule.addTask(projectModule.createUnzipTask());
+            }
+        });
+        return this;
+    }
+    
+    public ProjectModuleBuilder createUpdateTask() {
+        tasks.add(new Runnable() {
+            @Override
+            public void run() {
+                projectModule.addTask(projectModule.createUpdateTask());
+            }
+        });
+        return this;
+    }
+
     public ProjectModuleBuilder setSvnTool(SvnTool svnTool) {
         this.svnTool = svnTool;
         return this;
@@ -106,21 +155,14 @@ public class ProjectModuleBuilder {
 
     public ProjectModule internalBuild() {
 
-        projectModule = new ProjectModule(projectDir, moduleName, svnPath, moduleDownloadUrl, svnCheckoutPath);
+        projectModule = new ProjectModule(projectDir, moduleName, svnPath, moduleDownloadUrl, svnCheckoutPath, buildXmlPath);
         projectModule.setDownloader(downloader);
         projectModule.setSvnTool(svnTool);
         projectModule.setUnzipTool(unzipTool);
-        
-        if(isCreateDownloadTask) {
-            projectModule.createDownloadModuleTask();
-        }
-        
-        if(isCreateUnzipTask) {
-            projectModule.createUnzipTask();
-        }
-        
-        if(isCreateCheckoutTask) {
-            projectModule.createCheckoutTask();
+        projectModule.setAntTaskExecutorFactory(antTaskExecutorFactory);
+
+        for(Runnable task : tasks) {
+            task.run();
         }
 
         if (child != null) {
@@ -138,8 +180,9 @@ public class ProjectModuleBuilder {
 
         ProjectModuleBuilder it = this;
 
-        for (; it.child != null; it = it.child) { }
-        
+        for (; it.child != null; it = it.child) {
+        }
+
         return it.projectModule;
 
     }

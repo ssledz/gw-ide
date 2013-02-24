@@ -7,6 +7,8 @@ import java.util.LinkedList;
 import java.util.List;
 import org.tmatesoft.svn.core.SVNException;
 import pl.softech.gw.Utils;
+import pl.softech.gw.ant.AntTaskExecutorFactory;
+import pl.softech.gw.ant.IAntTaskExecutor;
 import pl.softech.gw.download.ResourceDownloader;
 import pl.softech.gw.svn.SvnTool;
 import pl.softech.gw.zip.Unzip;
@@ -22,19 +24,22 @@ public class ProjectModule {
     private final String svnPath;
     private final String svnCheckoutPath;
     private final String moduleDownloadUrl;
+    private final String buildXmlPath;
     private ProjectModule parent;
     private List<Runnable> tasks;
     private SvnTool svnTool;
     private ResourceDownloader downloader;
     private Unzip unzipTool;
+    private AntTaskExecutorFactory antTaskExecutorFactory;
 
-    public ProjectModule(File projectDir, String moduleName, String svnPath, String moduleDownloadUrl, String svnCheckoutPath) {
+    public ProjectModule(File projectDir, String moduleName, String svnPath, String moduleDownloadUrl, String svnCheckoutPath, String buildXmlPath) {
         this.projectDir = projectDir;
         this.moduleName = moduleName;
         this.svnPath = svnPath;
         this.moduleDownloadUrl = moduleDownloadUrl;
         this.tasks = new LinkedList<Runnable>();
         this.svnCheckoutPath = svnCheckoutPath;
+        this.buildXmlPath = buildXmlPath;
     }
 
     void setParent(ProjectModule parent) {
@@ -43,6 +48,10 @@ public class ProjectModule {
 
     void setUnzipTool(Unzip unzipTool) {
         this.unzipTool = unzipTool;
+    }
+
+    void setAntTaskExecutorFactory(AntTaskExecutorFactory antTaskExecutorFactory) {
+        this.antTaskExecutorFactory = antTaskExecutorFactory;
     }
 
     void setSvnTool(SvnTool svnTool) {
@@ -57,9 +66,20 @@ public class ProjectModule {
         tasks.add(task);
     }
 
-    void createDownloadModuleTask() {
+    Runnable createAntTask(final String target) {
 
-        tasks.add(new Runnable() {
+        return new Runnable() {
+            @Override
+            public void run() {
+                IAntTaskExecutor a = antTaskExecutorFactory.create(new File(getModuleDir(), buildXmlPath));
+                a.execute(target);
+            }
+        };
+    }
+
+    Runnable createDownloadModuleTask() {
+
+        return new Runnable() {
             @Override
             public void run() {
                 try {
@@ -73,7 +93,7 @@ public class ProjectModule {
                 }
 
             }
-        });
+        };
     }
 
     private String getZipFileName() {
@@ -84,9 +104,9 @@ public class ProjectModule {
         return new File(projectDir, moduleName);
     }
 
-    void createUnzipTask() {
+    Runnable createUnzipTask() {
 
-        tasks.add(new Runnable() {
+        return new Runnable() {
             @Override
             public void run() {
                 try {
@@ -98,13 +118,13 @@ public class ProjectModule {
                     throw new RuntimeException(ex);
                 }
             }
-        });
+        };
 
     }
 
-    void createCheckoutTask() {
+    Runnable createCheckoutTask() {
 
-        tasks.add(new Runnable() {
+        return new Runnable() {
             @Override
             public void run() {
                 try {
@@ -120,24 +140,43 @@ public class ProjectModule {
                     throw new RuntimeException(ex);
                 }
             }
-        });
+        };
 
     }
 
-    public void create() throws Exception {
+    Runnable createUpdateTask() {
+
+        return new Runnable() {
+            @Override
+            public void run() {
+                File svnCoDir = createCheckoutDir(projectDir, moduleName, svnCheckoutPath);
+                if (!svnCoDir.exists()) {
+                    throw new RuntimeException(String.format("Update dir %s doesn't exist", svnCoDir.getAbsolutePath()));
+                }
+                try {
+                    svnTool.update(svnCoDir);
+                } catch (SVNException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+        };
+
+    }
+
+    public void execute() throws Exception {
 
         if (!projectDir.exists()) {
             projectDir.mkdirs();
         }
 
         if (parent != null) {
-            parent.create();
+            parent.execute();
         }
 
         for (Runnable r : tasks) {
             r.run();
         }
-        
+
     }
 
     @Override
