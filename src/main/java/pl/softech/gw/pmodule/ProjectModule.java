@@ -1,4 +1,4 @@
-package pl.softech.gw;
+package pl.softech.gw.pmodule;
 
 import java.io.File;
 import java.io.IOException;
@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import org.tmatesoft.svn.core.SVNException;
+import pl.softech.gw.Utils;
 import pl.softech.gw.download.ResourceDownloader;
 import pl.softech.gw.svn.SvnTool;
 import pl.softech.gw.zip.Unzip;

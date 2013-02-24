@@ -1,5 +1,7 @@
 package pl.softech.gw;
 
+import pl.softech.gw.pmodule.ProjectModule;
+import pl.softech.gw.pmodule.ProjectModuleBuilder;
 import pl.softech.gw.zip.Unzip;
 import java.io.File;
 import pl.softech.gw.download.BytesReceivedEvent;

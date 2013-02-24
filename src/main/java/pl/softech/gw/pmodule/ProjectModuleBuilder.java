@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package pl.softech.gw;
+package pl.softech.gw.pmodule;
 
 import java.io.File;
 import pl.softech.gw.download.ResourceDownloader;
