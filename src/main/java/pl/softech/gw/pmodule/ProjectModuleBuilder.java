@@ -112,7 +112,7 @@ public class ProjectModuleBuilder {
         projectModule.setUnzipTool(unzipTool);
         
         if(isCreateDownloadTask) {
-            projectModule.createCheckoutTask();
+            projectModule.createDownloadModuleTask();
         }
         
         if(isCreateUnzipTask) {
