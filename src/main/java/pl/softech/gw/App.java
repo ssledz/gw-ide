@@ -240,9 +240,10 @@ public class App {
     private static void app5() throws Exception {
         
         ProjectModuleFactory projectModuleFactory = new ProjectModuleFactory(svn, downloader, unzip, antTaskExecutorFactory);
-        File projectDir = new File("C:\\Users\\ssledz\\development-workspace\\tmp\\pc-project2");
+        File projectDir = new File("C:\\Users\\ssledz\\development-workspace\\tmp\\pc-project3");
         ProjectModule pc = projectModuleFactory.create(projectDir, "create-pc-project.descriptor");
         System.out.println(pc.toString());
+        pc.execute();
         
     }
 
