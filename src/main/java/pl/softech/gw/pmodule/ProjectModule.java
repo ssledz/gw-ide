@@ -31,7 +31,7 @@ public class ProjectModule {
     public void setProjectDir(File projectDir) {
         this.projectDir = projectDir;
     }
-
+    
     public void setModuleName(String moduleName) {
         this.moduleName = moduleName;
     }
@@ -95,6 +95,9 @@ public class ProjectModule {
         }
 
         if (parent != null) {
+            if(parent.projectDir == null) {
+                parent.setProjectDir(projectDir);
+            }
             parent.execute();
         }
 

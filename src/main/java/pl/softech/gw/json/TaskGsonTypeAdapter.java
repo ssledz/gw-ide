@@ -144,7 +144,7 @@ public class TaskGsonTypeAdapter extends TypeAdapter<ITask> {
         while (reader.peek() != JsonToken.END_OBJECT) {
 
             String name = reader.nextName();
-            Object value = null;
+            Object value;
             if (reader.peek() == JsonToken.BEGIN_OBJECT) {
                 value = read(reader);
             } else {
