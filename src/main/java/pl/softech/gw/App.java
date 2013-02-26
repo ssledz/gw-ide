@@ -108,7 +108,7 @@ public class App {
 
         TaskFactory taskFactory = new TaskFactory(svn, downloader, unzip, antTaskExecutorFactory);
 
-        File projectDir = new File("C:\\Users\\ssledz\\development-workspace\\tmp\\pc-project4");
+        File projectDir = new File("C:\\Users\\ssledz\\development-workspace\\tmp\\pc-project5");
 
         ProjectModule module = new ProjectModule();
         ProjectModule parent = module;
@@ -121,7 +121,7 @@ public class App {
         module.setBuildXmlPath("\\modules\\ant\\build.xml");
         module.addTask(new ChainTask(taskFactory.createDownloadModuleTask(),
                 new ChainTask(taskFactory.createUnzipTask(), taskFactory.createCheckoutTask(), null), null));
-        
+
         module = new ProjectModule();
         module.setParent(parent);
         parent = module;
@@ -133,7 +133,7 @@ public class App {
         module.setBuildXmlPath("\\modules\\ant\\build.xml");
         module.addTask(new ChainTask(taskFactory.createDownloadModuleTask(),
                 new ChainTask(taskFactory.createUnzipTask(), taskFactory.createCheckoutTask(), null), null));
-        
+
         module = new ProjectModule();
         module.setParent(parent);
         parent = module;
@@ -145,8 +145,8 @@ public class App {
         module.setBuildXmlPath("\\modules\\ant\\build.xml");
         module.addTask(new ChainTask(taskFactory.createDownloadModuleTask(),
                 new ChainTask(taskFactory.createUnzipTask(), taskFactory.createCheckoutTask(), null), null));
-        
-        
+
+
         module = new ProjectModule();
         module.setParent(parent);
         parent = module;
@@ -158,8 +158,8 @@ public class App {
         module.addTask(new ChainTask(taskFactory.createCheckoutTask(), taskFactory.createAntTask("push-common-into-products"), null));
 
 
-     
-        
+
+
 
 
         GsonFactory gsonFactory = new GsonFactory(taskFactory);
@@ -168,7 +168,7 @@ public class App {
         String ret = gson.toJson(module);
         ProjectModule pm = gson.fromJson(ret, ProjectModule.class);
         System.out.println(gson.toJson(pm));
-        
+
         pm.setProjectDir(projectDir);
         pm.execute();
 
