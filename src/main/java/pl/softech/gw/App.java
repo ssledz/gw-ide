@@ -305,9 +305,9 @@ public class App {
         Gson gson = gsonFactory.create();
         
         String ret = gson.toJson(module);
-        System.out.println(ret);
-//        ProjectModule pm  =  gson.fromJson(ret, ProjectModule.class);
-//        System.out.println(gson.toJson(pm));
+//        System.out.println(ret);
+        ProjectModule pm  =  gson.fromJson(ret, ProjectModule.class);
+        System.out.println(gson.toJson(pm));
         
     }
 

@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import pl.softech.gw.task.AntTask;
+import pl.softech.gw.task.ChainTask;
 import pl.softech.gw.task.CheckoutTask;
 import pl.softech.gw.task.DownloadModuleTask;
 import pl.softech.gw.task.ITask;
@@ -63,6 +64,9 @@ public class TaskGsonTypeAdapter extends TypeAdapter<ITask> {
                     return taskFactory.createUpdateTask();
                 } else if (clazz == UnzipTask.class) {
                     return taskFactory.createUnzipTask();
+                } else if (clazz == ChainTask.class) {
+                    return new ChainTask((ITask) params.get("task").value, (ITask) params.get("next").value,
+                            params.get("onException") == null ? null : (ITask) params.get("onException").value);
                 }
 
             } catch (Exception e) {
@@ -140,10 +144,15 @@ public class TaskGsonTypeAdapter extends TypeAdapter<ITask> {
         while (reader.peek() != JsonToken.END_OBJECT) {
 
             String name = reader.nextName();
-            String value = reader.nextString();
+            Object value = null;
+            if (reader.peek() == JsonToken.BEGIN_OBJECT) {
+                value = read(reader);
+            } else {
+                value = reader.nextString();
+            }
 
             if (name.equals("class")) {
-                instanceCreator.className = value;
+                instanceCreator.className = value.toString();
             } else {
                 instanceCreator.params.put(name, new Param(name, value));
             }
