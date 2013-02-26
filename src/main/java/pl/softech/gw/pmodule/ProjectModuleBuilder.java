@@ -10,6 +10,7 @@ import java.util.List;
 import pl.softech.gw.ant.AntTaskExecutorFactory;
 import pl.softech.gw.download.ResourceDownloader;
 import pl.softech.gw.svn.SvnTool;
+import pl.softech.gw.task.ITask;
 import pl.softech.gw.zip.Unzip;
 
 /**
@@ -22,7 +23,6 @@ public class ProjectModuleBuilder {
     private ResourceDownloader downloader;
     private Unzip unzipTool;
     private AntTaskExecutorFactory antTaskExecutorFactory;
-    
     private File projectDir;
     private String moduleName;
     private String svnPath;
@@ -31,10 +31,10 @@ public class ProjectModuleBuilder {
     private String buildXmlPath;
     private ProjectModuleBuilder child;
     ProjectModule projectModule;
-    private List<Runnable> tasks;
+    private List<ITask> tasks;
 
     public ProjectModuleBuilder() {
-        tasks = new LinkedList<Runnable>();
+        tasks = new LinkedList<ITask>();
     }
 
     private ProjectModuleBuilder(ProjectModuleBuilder child) {
@@ -52,7 +52,7 @@ public class ProjectModuleBuilder {
         this.antTaskExecutorFactory = antTaskExecutorFactory;
         return this;
     }
-    
+
     public ProjectModuleBuilder setSvnCheckoutPath(String svnCheckoutPath) {
         this.svnCheckoutPath = svnCheckoutPath;
         return this;
@@ -60,58 +60,6 @@ public class ProjectModuleBuilder {
 
     public void setBuildXmlPath(String buildXmlPath) {
         this.buildXmlPath = buildXmlPath;
-    }
-    
-    public ProjectModuleBuilder createCheckoutTask() {
-
-        tasks.add(new Runnable() {
-            @Override
-            public void run() {
-                projectModule.addTask(projectModule.createCheckoutTask());
-            }
-        });
-        return this;
-    }
-    
-    public ProjectModuleBuilder createAntTask(final String target) {
-
-        tasks.add(new Runnable() {
-            @Override
-            public void run() {
-                projectModule.addTask(projectModule.createAntTask(target));
-            }
-        });
-        return this;
-    }
-
-    public ProjectModuleBuilder createDownloadTask() {
-        tasks.add(new Runnable() {
-            @Override
-            public void run() {
-                projectModule.addTask(projectModule.createDownloadModuleTask());
-            }
-        });
-        return this;
-    }
-
-    public ProjectModuleBuilder createUnzipTask() {
-        tasks.add(new Runnable() {
-            @Override
-            public void run() {
-                projectModule.addTask(projectModule.createUnzipTask());
-            }
-        });
-        return this;
-    }
-    
-    public ProjectModuleBuilder createUpdateTask() {
-        tasks.add(new Runnable() {
-            @Override
-            public void run() {
-                projectModule.addTask(projectModule.createUpdateTask());
-            }
-        });
-        return this;
     }
 
     public ProjectModuleBuilder setSvnTool(SvnTool svnTool) {
@@ -153,30 +101,28 @@ public class ProjectModuleBuilder {
         return new ProjectModuleBuilder(this);
     }
 
-    public ProjectModule internalBuild() {
-
-        projectModule = new ProjectModule(projectDir, moduleName, svnPath, moduleDownloadUrl, svnCheckoutPath, buildXmlPath);
-        projectModule.setDownloader(downloader);
-        projectModule.setSvnTool(svnTool);
-        projectModule.setUnzipTool(unzipTool);
-        projectModule.setAntTaskExecutorFactory(antTaskExecutorFactory);
-
-        for(Runnable task : tasks) {
-            task.run();
-        }
-
-        if (child != null) {
-            ProjectModule childProject = child.internalBuild();
-            childProject.setParent(projectModule);
-        }
-
-        return projectModule;
-
+    public void addTask(ITask task) {
+        tasks.add(task);
     }
+
+//    public ProjectModule internalBuild() {
+//
+//        projectModule = new ProjectModule(projectDir, moduleName, svnPath, moduleDownloadUrl, svnCheckoutPath, buildXmlPath);
+//
+//        projectModule.addAllTask(tasks);
+//
+//        if (child != null) {
+//            ProjectModule childProject = child.internalBuild();
+//            childProject.setParent(projectModule);
+//        }
+//
+//        return projectModule;
+//
+//    }
 
     public ProjectModule build() {
 
-        internalBuild();
+//        internalBuild();
 
         ProjectModuleBuilder it = this;
 

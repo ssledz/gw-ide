@@ -1,22 +1,12 @@
 package pl.softech.gw.pmodule;
 
-import pl.softech.gw.json.JsonExclusionStrategy;
-import pl.softech.gw.json.JsonExclude;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import java.io.File;
-import java.io.IOException;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-import org.tmatesoft.svn.core.SVNException;
-import pl.softech.gw.Utils;
-import pl.softech.gw.ant.AntTaskExecutorFactory;
-import pl.softech.gw.ant.IAntTaskExecutor;
-import pl.softech.gw.download.ResourceDownloader;
-import pl.softech.gw.json.GsonUtils;
-import pl.softech.gw.svn.SvnTool;
-import pl.softech.gw.zip.Unzip;
+import pl.softech.gw.json.JsonExclude;
+import pl.softech.gw.task.Context;
+import pl.softech.gw.task.ITask;
+import pl.softech.gw.task.ProcessTaskPanicException;
 
 /**
  *
@@ -24,180 +14,80 @@ import pl.softech.gw.zip.Unzip;
  */
 public class ProjectModule {
 
-    private final File projectDir;
-    private final String moduleName;
-    private final String svnPath;
-    private final String svnCheckoutPath;
-    private final String moduleDownloadUrl;
-    private final String buildXmlPath;
+    @JsonExclude
+    private File projectDir;
+    private String moduleName;
+    private String svnPath;
+    private String svnCheckoutPath;
+    private String moduleDownloadUrl;
+    private String buildXmlPath;
     private ProjectModule parent;
-    private List<Runnable> tasks;
-    @JsonExclude
-    private SvnTool svnTool;
-    @JsonExclude
-    private ResourceDownloader downloader;
-    @JsonExclude
-    private Unzip unzipTool;
-    @JsonExclude
-    private AntTaskExecutorFactory antTaskExecutorFactory;
+    private List<ITask> tasks;
 
-    public ProjectModule(File projectDir, String moduleName, String svnPath, String moduleDownloadUrl, String svnCheckoutPath, String buildXmlPath) {
+    public ProjectModule() {
+        tasks = new LinkedList<ITask>();
+    }
+    
+    public void setProjectDir(File projectDir) {
         this.projectDir = projectDir;
+    }
+
+    public void setModuleName(String moduleName) {
         this.moduleName = moduleName;
+    }
+
+    public void setSvnPath(String svnPath) {
         this.svnPath = svnPath;
-        this.moduleDownloadUrl = moduleDownloadUrl;
-        this.tasks = new LinkedList<Runnable>();
+    }
+
+    public void setSvnCheckoutPath(String svnCheckoutPath) {
         this.svnCheckoutPath = svnCheckoutPath;
+    }
+
+    public void setModuleDownloadUrl(String moduleDownloadUrl) {
+        this.moduleDownloadUrl = moduleDownloadUrl;
+    }
+
+    public void setBuildXmlPath(String buildXmlPath) {
         this.buildXmlPath = buildXmlPath;
     }
 
-    void setParent(ProjectModule parent) {
+    public File getProjectDir() {
+        return projectDir;
+    }
+
+    public String getModuleName() {
+        return moduleName;
+    }
+
+    public String getSvnPath() {
+        return svnPath;
+    }
+
+    public String getSvnCheckoutPath() {
+        return svnCheckoutPath;
+    }
+
+    public String getBuildXmlPath() {
+        return buildXmlPath;
+    }
+
+    public String getModuleDownloadUrl() {
+        return moduleDownloadUrl;
+    }
+
+    public void setParent(ProjectModule parent) {
         this.parent = parent;
     }
 
-    void setUnzipTool(Unzip unzipTool) {
-        this.unzipTool = unzipTool;
-    }
-
-    void setAntTaskExecutorFactory(AntTaskExecutorFactory antTaskExecutorFactory) {
-        this.antTaskExecutorFactory = antTaskExecutorFactory;
-    }
-
-    void setSvnTool(SvnTool svnTool) {
-        this.svnTool = svnTool;
-    }
-
-    void setDownloader(ResourceDownloader downloader) {
-        this.downloader = downloader;
-    }
-
-    public void addTask(Runnable task) {
+    public void addTask(ITask task) {
         tasks.add(task);
     }
 
-    Runnable createAntTask(final String target) {
-
-        return new Runnable() {
-            
-            @Override
-            public void run() {
-                IAntTaskExecutor a = antTaskExecutorFactory.create(new File(getModuleDir(), buildXmlPath));
-                a.execute(target);
-            }
-
-            @Override
-            public String toString() {
-                return String.format("AntTask[%s]", target);
-            }
-        };
+    public void addAllTask(List<ITask> tasks) {
+        this.tasks.addAll(tasks);
     }
-
-    Runnable createDownloadModuleTask() {
-
-        return new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    downloader.download(moduleDownloadUrl, projectDir, getZipFileName());
-                    File moduleDir = getModuleDir();
-                    if (moduleDir.exists()) {
-                        moduleDir.renameTo(new File(projectDir, String.format("%s-%s", moduleName, new Date().getTime())));
-                    }
-                } catch (IOException ex) {
-                    throw new RuntimeException(ex);
-                }
-
-            }
-
-            @Override
-            public String toString() {
-                return "DownloadModuleTask";
-            }
-        };
-    }
-
-    private String getZipFileName() {
-        return moduleName + ".zip";
-    }
-
-    private File getModuleDir() {
-        return new File(projectDir, moduleName);
-    }
-
-    Runnable createUnzipTask() {
-
-        return new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    File moduleDir = getModuleDir();
-                    moduleDir.mkdir();
-
-                    unzipTool.unzipFile(new File(projectDir, getZipFileName()), moduleDir);
-                } catch (IOException ex) {
-                    throw new RuntimeException(ex);
-                }
-            }
-
-            @Override
-            public String toString() {
-                return "UnzipTask";
-            }
-        };
-
-    }
-
-    Runnable createCheckoutTask() {
-
-        return new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    File svnCoDir = createCheckoutDir(projectDir, moduleName, svnCheckoutPath);
-                    System.out.println(svnCoDir.getAbsolutePath());
-                    System.out.println(svnPath);
-                    if (svnCoDir.exists()) {
-                        Utils.deleteRecursive(svnCoDir);
-                    }
-
-                    svnTool.checkout(svnPath, svnCoDir);
-                } catch (SVNException ex) {
-                    throw new RuntimeException(ex);
-                }
-            }
-
-            @Override
-            public String toString() {
-                return "CheckoutTask";
-            }
-        };
-
-    }
-
-    Runnable createUpdateTask() {
-
-        return new Runnable() {
-            @Override
-            public void run() {
-                File svnCoDir = createCheckoutDir(projectDir, moduleName, svnCheckoutPath);
-                if (!svnCoDir.exists()) {
-                    throw new RuntimeException(String.format("Update dir %s doesn't exist", svnCoDir.getAbsolutePath()));
-                }
-                try {
-                    svnTool.update(svnCoDir);
-                } catch (SVNException ex) {
-                    throw new RuntimeException(ex);
-                }
-            }
-
-            @Override
-            public String toString() {
-                return "UpdateTask";
-            }
-        };
-
-    }
-
+    
     public void execute() throws Exception {
 
         if (!projectDir.exists()) {
@@ -208,18 +98,16 @@ public class ProjectModule {
             parent.execute();
         }
 
-        for (Runnable r : tasks) {
-            r.run();
+        for (ITask task : tasks) {
+            try {
+                task.execute(new Context(this));
+            } catch (ProcessTaskPanicException e) {
+                throw e;
+            } catch (Exception e) {
+                //TODO firing event
+                e.printStackTrace();
+            }
         }
 
-    }
-
-    @Override
-    public String toString() {
-        return GsonUtils.createGson().toJson(this);
-    }
-
-    public static File createCheckoutDir(File projectDir, String moduleName, String checkoutPath) {
-        return new File(projectDir, moduleName + checkoutPath);
     }
 }
