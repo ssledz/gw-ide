@@ -108,7 +108,7 @@ public class App {
 
         TaskFactory taskFactory = new TaskFactory(svn, downloader, unzip, antTaskExecutorFactory);
 
-        File projectDir = new File("C:\\Users\\ssledz\\development-workspace\\tmp\\pc-project5");
+        File projectDir = new File("C:\\Users\\ssledz\\Desktop\\tmp\\pc-project6");
 
         ProjectModule module = new ProjectModule();
         ProjectModule parent = module;

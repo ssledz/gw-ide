@@ -11,10 +11,10 @@ package pl.softech.gw.download;
 public class BytesReceivedEvent implements IDownloadEvent {
     
     private int received;
-    private int all;
+    private long all;
     private String fileName;
 
-    public BytesReceivedEvent(int received, int all, String fileName) {
+    public BytesReceivedEvent(int received, long all, String fileName) {
         this.received = received;
         this.all = all;
         this.fileName = fileName;
@@ -24,7 +24,7 @@ public class BytesReceivedEvent implements IDownloadEvent {
         return received;
     }
 
-    public int getAll() {
+    public long getAll() {
         return all;
     }
 
