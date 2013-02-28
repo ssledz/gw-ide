@@ -39,15 +39,16 @@ public class ResourceDownloader {
 
         DefaultHttpClient httpclient = new DefaultHttpClient();
         HttpGet httpGet = new HttpGet(url);
-
+        
         HttpResponse response = httpclient.execute(httpGet);
-
+           
         HttpEntity entity = null;
 
         BufferedInputStream in = null;
         BufferedOutputStream out = null;
         try {
             entity = response.getEntity();
+            
             long all = entity.getContentLength();
             in = new BufferedInputStream(entity.getContent());
             out = new BufferedOutputStream(new FileOutputStream(new File(dir, fileName)));
@@ -74,6 +75,8 @@ public class ResourceDownloader {
             if (out != null) {
                 out.close();
             }
+            
+            httpclient.getConnectionManager().shutdown();
 
         }
 
