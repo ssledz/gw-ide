@@ -7,19 +7,19 @@
     "moduleName": "PolicyCenter",
     "svnPath": "file:///C:/Users/ssledz/svn-repository/pc/trunk/modules/configuration",
     "svnCheckoutPath": "\\modules\\configuration",
-    "moduleDownloadUrl": "http://localhost:8080/pc-repository/PolicyCenter7.0.6.zip",
+    "moduleDownloadUrl": "http://localhost/pc-repository/PolicyCenter7.0.6.zip",
     "buildXmlPath": "\\modules\\ant\\build.xml",
     "parent": {
       "moduleName": "BillingCenter",
       "svnPath": "file:///C:/Users/ssledz/svn-repository/bc/trunk/modules/configuration",
       "svnCheckoutPath": "\\modules\\configuration",
-      "moduleDownloadUrl": "http://localhost:8080/pc-repository/BillingCenter7.0.2_patch_1_2.zip",
+      "moduleDownloadUrl": "http://localhost/pc-repository/BillingCenter7.0.2_patch_1_2.zip",
       "buildXmlPath": "\\modules\\ant\\build.xml",
       "parent": {
         "moduleName": "ContactManager",
         "svnPath": "file:///C:/Users/ssledz/svn-repository/cm/trunk/modules/configuration",
         "svnCheckoutPath": "\\modules\\configuration",
-        "moduleDownloadUrl": "http://localhost:8080/pc-repository/ContactManager7.0.3.zip",
+        "moduleDownloadUrl": "http://localhost/pc-repository/ContactManager7.0.3.zip",
         "buildXmlPath": "\\modules\\ant\\build.xml",
         "tasks": [
           {

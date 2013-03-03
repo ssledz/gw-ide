@@ -9,10 +9,13 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.LinkedList;
 import java.util.List;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.StatusLine;
+import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
@@ -39,18 +42,29 @@ public class ResourceDownloader {
 
         DefaultHttpClient httpclient = new DefaultHttpClient();
         HttpGet httpGet = new HttpGet(url);
-        
+
         HttpResponse response = httpclient.execute(httpGet);
-           
+
+
+
         HttpEntity entity = null;
 
         BufferedInputStream in = null;
+        InputStream ins = null;
         BufferedOutputStream out = null;
         try {
+            StatusLine statusLine = response.getStatusLine();
             entity = response.getEntity();
-            
+
+            if (statusLine.getStatusCode() >= 300) {
+                EntityUtils.consume(entity);
+                throw new HttpResponseException(statusLine.getStatusCode(),
+                        statusLine.getReasonPhrase());
+            }
+
+            ins = entity.getContent();
             long all = entity.getContentLength();
-            in = new BufferedInputStream(entity.getContent());
+            in = new BufferedInputStream(ins);
             out = new BufferedOutputStream(new FileOutputStream(new File(dir, fileName)));
 
             byte[] buffer = new byte[1024];
@@ -60,13 +74,14 @@ public class ResourceDownloader {
                 fireEvent(new BytesReceivedEvent(cnt, all, fileName));
             }
 
-            EntityUtils.consume(entity);
         } catch (IOException e) {
             fireEvent(new DownloadErrorEvent(String.format("Error during downloading file %s", fileName), e));
             throw e;
         } finally {
 
-            httpGet.releaseConnection();
+            if (ins != null) {
+                ins.close();
+            }
 
             if (in != null) {
                 in.close();
@@ -75,7 +90,8 @@ public class ResourceDownloader {
             if (out != null) {
                 out.close();
             }
-            
+
+            httpGet.releaseConnection();
             httpclient.getConnectionManager().shutdown();
 
         }
