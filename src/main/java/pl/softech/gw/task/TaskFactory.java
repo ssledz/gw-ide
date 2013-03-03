@@ -47,4 +47,8 @@ public class TaskFactory {
         return new AntTask(antTaskExecutorFactory, antTarget);
     }
     
+     public ITask createGwModuleStartTask() {
+        return new GwModuleStartTask(antTaskExecutorFactory);
+    }
+    
 }

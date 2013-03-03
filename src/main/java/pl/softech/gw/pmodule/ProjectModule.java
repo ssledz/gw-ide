@@ -27,11 +27,11 @@ public class ProjectModule {
     public ProjectModule() {
         tasks = new LinkedList<ITask>();
     }
-    
+
     public void setProjectDir(File projectDir) {
         this.projectDir = projectDir;
     }
-    
+
     public void setModuleName(String moduleName) {
         this.moduleName = moduleName;
     }
@@ -87,7 +87,7 @@ public class ProjectModule {
     public void addAllTask(List<ITask> tasks) {
         this.tasks.addAll(tasks);
     }
-    
+
     public void execute() throws Exception {
 
         if (!projectDir.exists()) {
@@ -95,21 +95,15 @@ public class ProjectModule {
         }
 
         if (parent != null) {
-            if(parent.projectDir == null) {
+            if (parent.projectDir == null) {
                 parent.setProjectDir(projectDir);
             }
             parent.execute();
         }
 
         for (ITask task : tasks) {
-            try {
-                task.execute(new Context(this));
-            } catch (ProcessTaskPanicException e) {
-                throw e;
-            } catch (Exception e) {
-                //TODO firing event
-                e.printStackTrace();
-            }
+            task.execute(new Context(this));
+
         }
 
     }

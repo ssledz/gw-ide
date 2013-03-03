@@ -55,6 +55,10 @@ public class AntTaskExecutorFactory {
     public void addBuildListener(BuildListener l) {
         listeners.add(l);
     }
+    
+    public void removeBuildListener(BuildListener l) {
+        listeners.remove(l);
+    }
 
     public AntTaskExecutorIml create(File buildFile) {
         AntTaskExecutorIml impl = new AntTaskExecutorIml(buildFile);

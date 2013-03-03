@@ -18,6 +18,7 @@ import pl.softech.gw.task.AntTask;
 import pl.softech.gw.task.ChainTask;
 import pl.softech.gw.task.CheckoutTask;
 import pl.softech.gw.task.DownloadModuleTask;
+import pl.softech.gw.task.GwModuleStartTask;
 import pl.softech.gw.task.ITask;
 import pl.softech.gw.task.TaskFactory;
 import pl.softech.gw.task.TaskParam;
@@ -67,6 +68,8 @@ public class TaskGsonTypeAdapter extends TypeAdapter<ITask> {
                 } else if (clazz == ChainTask.class) {
                     return new ChainTask((ITask) params.get("task").value, (ITask) params.get("next").value,
                             params.get("onException") == null ? null : (ITask) params.get("onException").value);
+                } else if (clazz == GwModuleStartTask.class) {
+                    return taskFactory.createGwModuleStartTask();
                 }
 
             } catch (Exception e) {

@@ -5,6 +5,7 @@
 package pl.softech.gw.gui;
 
 import com.google.gson.Gson;
+import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -12,8 +13,10 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.Properties;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -46,6 +49,53 @@ import pl.softech.gw.zip.UnzipPathEvent;
  */
 public class SimpleRunnerController {
 
+    private class Configuration {
+
+        private String confFileName = ".simplerunner.conf";
+        private String projectDescriptorKey = "project.descriptor";
+        private String projectDirKey = "project.dir";
+
+        void read() throws Exception {
+
+            File confFile = new File(confFileName);
+            if (!confFile.exists()) {
+                return;
+            }
+
+            FileReader in = null;
+            try {
+                in = new FileReader(confFile);
+                Properties props = new Properties();
+                props.load(in);
+                view.getProjectDescriptorTextField().setText(props.getProperty(projectDescriptorKey));
+                view.getProjectDirTextField().setText(props.getProperty(projectDirKey));
+            } finally {
+                if (in != null) {
+                    in.close();
+                }
+            }
+
+
+        }
+
+        void save() throws Exception {
+
+            File confFile = new File(confFileName);
+            Properties props = new Properties();
+            props.put(projectDescriptorKey, view.getProjectDescriptorTextField().getText());
+            props.put(projectDirKey, view.getProjectDirTextField().getText());
+
+            FileWriter out = null;
+            try {
+                out = new FileWriter(confFile);
+                props.store(out, "");
+            } finally {
+                if (out != null) {
+                    out.close();
+                }
+            }
+        }
+    }
     private final JFrame frame;
     private final SimpleRunnerView view;
     private SvnTool svnTool;
@@ -59,19 +109,27 @@ public class SimpleRunnerController {
         init();
     }
 
-    private void initTest() {
-        view.getProjectDirTextField().setText("C:\\Users\\ssledz\\Desktop\\tmp\\pr1");
-        view.getProjectDescriptorTextField().setText("C:\\Users\\ssledz\\Desktop\\tmp\\create-pc-project.descriptor");
+    private void println(Exception e) {
+        StringWriter sw = new StringWriter();
+        e.printStackTrace(new PrintWriter(sw));
+        println(sw.getBuffer().toString(), Color.RED);
     }
 
     private void println(final String message) {
+        println(message, Color.BLACK);
+    }
+    
+    private void println(final String message, final Color color) {
 
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
                 JTextArea textArea = view.getMessageTextArea();
+                Color fg = textArea.getForeground();
+                textArea.setForeground(color);
                 textArea.append(message);
                 textArea.append("\n");
+                textArea.setForeground(fg);
                 textArea.setCaretPosition(textArea.getDocument().getLength());
             }
         });
@@ -81,7 +139,23 @@ public class SimpleRunnerController {
 
     private void init() {
 
-//        initTest();
+        try {
+            new Configuration().read();
+        } catch (Exception e) {
+            println(e);
+        }
+
+        Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    new Configuration().save();
+                } catch (Exception ex) {
+                    println(ex);
+                }
+
+            }
+        }));
 
         initTools();
 
@@ -170,9 +244,7 @@ public class SimpleRunnerController {
                             pm.execute();
                         } catch (Exception ex) {
                             JOptionPane.showMessageDialog(frame, "Error during executing", "Error", JOptionPane.ERROR_MESSAGE);
-                            StringWriter sw = new StringWriter();
-                            ex.printStackTrace(new PrintWriter(sw));
-                            println(sw.getBuffer().toString());
+                            println(ex);
                         } finally {
                             executeProjectModule(false);
                         }
@@ -242,7 +314,7 @@ public class SimpleRunnerController {
 
                     }
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    println(e);
                 }
 
             }
