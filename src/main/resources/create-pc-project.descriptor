@@ -82,8 +82,15 @@
         "class": "pl.softech.gw.task.CheckoutTask"
       },
       "next": {
-        "class": "pl.softech.gw.task.AntTask",
-        "target": "push-common-into-products"
+        "class": "pl.softech.gw.task.ChainTask",
+        "task": {
+          "class": "pl.softech.gw.task.AntTask",
+          "target": "push-common-into-products"
+        },
+        "next": {
+          "class": "pl.softech.gw.task.AntTask",
+          "target": "init-products-data"
+        }
       }
     }
   ]
