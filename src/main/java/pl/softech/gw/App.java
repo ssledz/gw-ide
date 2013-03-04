@@ -373,7 +373,70 @@ public class App {
 
     }
 
+    private static void dropAndRunProjectJob() throws Exception {
+
+        TaskFactory taskFactory = new TaskFactory(svn, downloader, unzip, antTaskExecutorFactory);
+
+        File projectDir = new File("C:\\Users\\ssledz\\Desktop\\tmp\\pc-project6");
+
+        ProjectModule dspCommon = new ProjectModule();
+        dspCommon.setProjectDir(projectDir);
+        dspCommon.setModuleName("DSPCommon");
+        dspCommon.setSvnCheckoutPath("\\modules");
+        dspCommon.setSvnPath("file:///C:/Users/ssledz/svn-repository/dspcommon/trunk/modules");
+        dspCommon.setBuildXmlPath("\\modules\\ant\\build-common.xml");
+
+
+        ProjectModule module = new ProjectModule();
+        ProjectModule parent = module;
+
+        module.setProjectDir(projectDir);
+        module.setModuleName("ContactManager");
+        module.setSvnCheckoutPath("\\modules\\configuration");
+        module.setModuleDownloadUrl("http://localhost:8080/pc-repository/ContactManager7.0.3.zip");
+        module.setSvnPath("file:///C:/Users/ssledz/svn-repository/cm/trunk/modules/configuration");
+        module.setBuildXmlPath("\\modules\\ant\\build.xml");
+
+        module.addTask(new ChainTask(taskFactory.createAntTask("dev-dropdb"), taskFactory.createGwModuleStartTask(), null));
+
+        module = new ProjectModule();
+        module.setParent(parent);
+        parent = module;
+        module.setProjectDir(projectDir);
+        module.setModuleName("BillingCenter");
+        module.setSvnCheckoutPath("\\modules\\configuration");
+        module.setModuleDownloadUrl("http://localhost:8080/pc-repository/BillingCenter7.0.2_patch_1_2.zip");
+        module.setSvnPath("file:///C:/Users/ssledz/svn-repository/bc/trunk/modules/configuration");
+        module.setBuildXmlPath("\\modules\\ant\\build.xml");
+
+        module.addTask(new ChainTask(taskFactory.createAntTask("dev-dropdb"), 
+                new ChainTask(taskFactory.createExternalAntTask("init-bc-data", dspCommon), taskFactory.createGwModuleStartTask(), null), null));
+
+        module = new ProjectModule();
+        module.setParent(parent);
+        parent = module;
+        module.setProjectDir(projectDir);
+        module.setModuleName("PolicyCenter");
+        module.setSvnCheckoutPath("\\modules\\configuration");
+        module.setModuleDownloadUrl("http://localhost:8080/pc-repository/PolicyCenter7.0.6.zip");
+        module.setSvnPath("file:///C:/Users/ssledz/svn-repository/pc/trunk/modules/configuration");
+        module.setBuildXmlPath("\\modules\\ant\\build.xml");
+
+        module.addTask(new ChainTask(taskFactory.createAntTask("dev-dropdb"), 
+                new ChainTask(taskFactory.createExternalAntTask("init-pc-data", dspCommon), taskFactory.createGwModuleStartTask(), null), null));
+        
+        GsonFactory gsonFactory = new GsonFactory(taskFactory);
+        Gson gson = gsonFactory.create();
+
+        String ret = gson.toJson(module);
+        ProjectModule pm = gson.fromJson(ret, ProjectModule.class);
+        System.out.println(gson.toJson(pm));
+
+        pm.setProjectDir(projectDir);
+
+    }
+
     public static void main(String[] args) throws Exception {
-        runProjectDevJob();
+        dropAndRunProjectJob();
     }
 }
