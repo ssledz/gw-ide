@@ -91,12 +91,23 @@
             }
           },
           "next": {
-            "class": "pl.softech.gw.task.GwModuleStartTask"
+            "class": "pl.softech.gw.task.ChainTask",
+            "task": {
+              "class": "pl.softech.gw.task.GwModuleStartTask"
+            },
+            "next": {
+              "class": "pl.softech.gw.task.AntTask",
+              "target": "studio-debug-socket"
+            }
           }
         }
       },
       "task": {
         "class": "pl.softech.gw.task.GwModuleStartTask"
+      },
+      "next": {
+        "class": "pl.softech.gw.task.AntTask",
+        "target": "studio-debug-socket"
       }
     }
   ]

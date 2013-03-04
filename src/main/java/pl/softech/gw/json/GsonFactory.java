@@ -23,8 +23,11 @@ public class GsonFactory {
 
     public Gson create() {
         GsonBuilder builder = new GsonBuilder().setExclusionStrategies(new JsonExclusionStrategy()).setPrettyPrinting();
-        builder.registerTypeAdapter(ITask.class, new TaskGsonTypeAdapter(taskFactory));
-        return builder.create();
+        TaskGsonTypeAdapter taskAdapter = new TaskGsonTypeAdapter(taskFactory);
+        builder.registerTypeAdapter(ITask.class, taskAdapter);
+        Gson gson = builder.create();
+        taskAdapter.setGson(gson);
+        return gson;
 
     }
 }

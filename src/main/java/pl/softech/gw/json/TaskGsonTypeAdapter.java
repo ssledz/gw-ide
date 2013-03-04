@@ -14,16 +14,19 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
+import pl.softech.gw.pmodule.ProjectModule;
 import pl.softech.gw.task.AntTask;
 import pl.softech.gw.task.ChainTask;
 import pl.softech.gw.task.CheckoutTask;
 import pl.softech.gw.task.DownloadModuleTask;
+import pl.softech.gw.task.ExternalAntTask;
 import pl.softech.gw.task.GwModuleStartTask;
 import pl.softech.gw.task.ITask;
 import pl.softech.gw.task.TaskFactory;
 import pl.softech.gw.task.TaskParam;
 import pl.softech.gw.task.UnzipTask;
 import pl.softech.gw.task.UpdateTask;
+import com.google.gson.Gson;
 
 /**
  *
@@ -66,10 +69,14 @@ public class TaskGsonTypeAdapter extends TypeAdapter<ITask> {
                 } else if (clazz == UnzipTask.class) {
                     return taskFactory.createUnzipTask();
                 } else if (clazz == ChainTask.class) {
-                    return new ChainTask((ITask) params.get("task").value, (ITask) params.get("next").value,
+                    return new ChainTask((ITask) params.get("task").value,
+                            params.get("next") == null ? null : (ITask) params.get("next").value,
                             params.get("onException") == null ? null : (ITask) params.get("onException").value);
                 } else if (clazz == GwModuleStartTask.class) {
                     return taskFactory.createGwModuleStartTask();
+                } else if (clazz == ExternalAntTask.class) {
+                    return taskFactory.createExternalAntTask(params.get("target").value.toString(),
+                            (ProjectModule) params.get("module").value);
                 }
 
             } catch (Exception e) {
@@ -80,9 +87,14 @@ public class TaskGsonTypeAdapter extends TypeAdapter<ITask> {
         }
     }
     private final TaskFactory taskFactory;
+    private Gson gson;
 
     public TaskGsonTypeAdapter(TaskFactory taskFactory) {
         this.taskFactory = taskFactory;
+    }
+
+    public void setGson(Gson gson) {
+        this.gson = gson;
     }
 
     private Collection<Param> getParams(ITask value) {
@@ -118,6 +130,8 @@ public class TaskGsonTypeAdapter extends TypeAdapter<ITask> {
             if (p.value != null) {
                 if (p.value instanceof ITask) {
                     this.write(out, (ITask) p.value);
+                } else if (p.value instanceof ProjectModule) {
+                    gson.getAdapter(ProjectModule.class).write(out, (ProjectModule) p.value);
                 } else {
                     out.value(p.value.toString());
                 }
@@ -148,10 +162,14 @@ public class TaskGsonTypeAdapter extends TypeAdapter<ITask> {
 
             String name = reader.nextName();
             Object value;
-            if (reader.peek() == JsonToken.BEGIN_OBJECT) {
+            if (reader.peek() == JsonToken.BEGIN_OBJECT && !name.equals("module")) {
                 value = read(reader);
             } else {
-                value = reader.nextString();
+                if (name.equals("module")) {
+                    value = gson.getAdapter(ProjectModule.class).read(reader);
+                } else {
+                    value = reader.nextString();
+                }
             }
 
             if (name.equals("class")) {

@@ -23,12 +23,18 @@ public class ChainTask implements ITask {
         this.next = next;
     }
 
+    public ChainTask(ITask task, ITask onException) {
+        this(task, null, onException);
+    }
+
     @Override
     public void execute(Context context) {
 
         try {
             task.execute(context);
-            next.execute(context);
+            if (next != null) {
+                next.execute(context);
+            }
         } catch (RuntimeException e) {
             if (onException == null) {
                 throw e;

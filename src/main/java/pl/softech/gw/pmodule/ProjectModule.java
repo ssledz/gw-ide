@@ -6,7 +6,6 @@ import java.util.List;
 import pl.softech.gw.json.JsonExclude;
 import pl.softech.gw.task.Context;
 import pl.softech.gw.task.ITask;
-import pl.softech.gw.task.ProcessTaskPanicException;
 
 /**
  *
@@ -27,7 +26,7 @@ public class ProjectModule {
     public ProjectModule() {
         tasks = new LinkedList<ITask>();
     }
-
+    
     public void setProjectDir(File projectDir) {
         this.projectDir = projectDir;
     }

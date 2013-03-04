@@ -6,6 +6,7 @@ package pl.softech.gw.task;
 
 import pl.softech.gw.ant.AntTaskExecutorFactory;
 import pl.softech.gw.download.ResourceDownloader;
+import pl.softech.gw.pmodule.ProjectModule;
 import pl.softech.gw.svn.SvnTool;
 import pl.softech.gw.zip.Unzip;
 
@@ -49,6 +50,10 @@ public class TaskFactory {
     
      public ITask createGwModuleStartTask() {
         return new GwModuleStartTask(antTaskExecutorFactory);
+    }
+     
+     public ITask createExternalAntTask(String antTarget, ProjectModule module) {
+        return new ExternalAntTask(antTaskExecutorFactory, antTarget, module);
     }
     
 }
