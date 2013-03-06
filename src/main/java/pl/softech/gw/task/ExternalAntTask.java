@@ -36,6 +36,7 @@ public class ExternalAntTask implements ITask {
     
     @Override
     public void execute(Context context) {
+        module.setProjectDir(context.getModule().getProjectDir());
         context = new Context(module);
         IAntTaskExecutor a = antTaskExecutorFactory.create(new File(context.getModuleDir(), context.getModule().getBuildXmlPath()));
         a.execute(target);

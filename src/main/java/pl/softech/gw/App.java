@@ -273,7 +273,7 @@ public class App {
 
         module.addTask(new ChainTask(taskFactory.createGwModuleStartTask(),
                 new ChainTask(taskFactory.createAntTask("dev-dropdb"),
-                new ChainTask(taskFactory.createExternalAntTask("init-bc-data", dspCommon), taskFactory.createGwModuleStartTask(), null),
+                new ChainTask(taskFactory.createGwModuleStartTask(), taskFactory.createExternalAntTask("init-bc-data", dspCommon), null),
                 null)));
 
         module = new ProjectModule();
@@ -288,7 +288,7 @@ public class App {
 
         module.addTask(new ChainTask(taskFactory.createGwModuleStartTask(),
                 new ChainTask(taskFactory.createAntTask("dev-dropdb"),
-                new ChainTask(taskFactory.createExternalAntTask("init-pc-data", dspCommon), taskFactory.createGwModuleStartTask(), null),
+                new ChainTask(taskFactory.createGwModuleStartTask(), taskFactory.createExternalAntTask("init-pc-data", dspCommon), null),
                 null)));
 
 
@@ -341,7 +341,7 @@ public class App {
 
         module.addTask(new ChainTask(taskFactory.createGwModuleStartTask(),
                 new ChainTask(taskFactory.createAntTask("dev-dropdb"),
-                new ChainTask(taskFactory.createExternalAntTask("init-bc-data", dspCommon), taskFactory.createGwModuleStartTask(), null),
+                new ChainTask(taskFactory.createGwModuleStartTask(), taskFactory.createExternalAntTask("init-bc-data", dspCommon), null),
                 null)));
 
         module = new ProjectModule();
@@ -356,8 +356,8 @@ public class App {
 
         module.addTask(new ChainTask(taskFactory.createGwModuleStartTask(), taskFactory.createAntTask("studio-debug-socket"),
                 new ChainTask(taskFactory.createAntTask("dev-dropdb"),
-                new ChainTask(taskFactory.createExternalAntTask("init-pc-data", dspCommon),
-                new ChainTask(taskFactory.createGwModuleStartTask(), taskFactory.createAntTask("studio-debug-socket"), null),
+                new ChainTask(taskFactory.createGwModuleStartTask(),
+                new ChainTask(taskFactory.createExternalAntTask("init-pc-data", dspCommon), taskFactory.createAntTask("studio-debug-socket"), null),
                 null),
                 null)));
 
@@ -409,8 +409,8 @@ public class App {
         module.setSvnPath("file:///C:/Users/ssledz/svn-repository/bc/trunk/modules/configuration");
         module.setBuildXmlPath("\\modules\\ant\\build.xml");
 
-        module.addTask(new ChainTask(taskFactory.createAntTask("dev-dropdb"), 
-                new ChainTask(taskFactory.createExternalAntTask("init-bc-data", dspCommon), taskFactory.createGwModuleStartTask(), null), null));
+        module.addTask(new ChainTask(taskFactory.createAntTask("dev-dropdb"),
+                new ChainTask(taskFactory.createGwModuleStartTask(), taskFactory.createExternalAntTask("init-bc-data", dspCommon), null), null));
 
         module = new ProjectModule();
         module.setParent(parent);
@@ -422,9 +422,9 @@ public class App {
         module.setSvnPath("file:///C:/Users/ssledz/svn-repository/pc/trunk/modules/configuration");
         module.setBuildXmlPath("\\modules\\ant\\build.xml");
 
-        module.addTask(new ChainTask(taskFactory.createAntTask("dev-dropdb"), 
-                new ChainTask(taskFactory.createExternalAntTask("init-pc-data", dspCommon), taskFactory.createGwModuleStartTask(), null), null));
-        
+        module.addTask(new ChainTask(taskFactory.createAntTask("dev-dropdb"),
+                new ChainTask(taskFactory.createGwModuleStartTask(), taskFactory.createExternalAntTask("init-pc-data", dspCommon), null), null));
+
         GsonFactory gsonFactory = new GsonFactory(taskFactory);
         Gson gson = gsonFactory.create();
 
@@ -437,6 +437,8 @@ public class App {
     }
 
     public static void main(String[] args) throws Exception {
-        dropAndRunProjectJob();
+//        dropAndRunProjectJob();
+//        runProjectJob();
+        runProjectDevJob();
     }
 }

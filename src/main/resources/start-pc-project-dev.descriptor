@@ -47,6 +47,9 @@
           "next": {
             "class": "pl.softech.gw.task.ChainTask",
             "task": {
+              "class": "pl.softech.gw.task.GwModuleStartTask"
+            },
+            "next": {
               "class": "pl.softech.gw.task.ExternalAntTask",
               "target": "init-bc-data",
               "module": {
@@ -56,9 +59,6 @@
                 "buildXmlPath": "\\modules\\ant\\build-common.xml",
                 "tasks": []
               }
-            },
-            "next": {
-              "class": "pl.softech.gw.task.GwModuleStartTask"
             }
           }
         },
@@ -80,20 +80,20 @@
         "next": {
           "class": "pl.softech.gw.task.ChainTask",
           "task": {
-            "class": "pl.softech.gw.task.ExternalAntTask",
-            "target": "init-pc-data",
-            "module": {
-              "moduleName": "DSPCommon",
-              "svnPath": "file:///C:/Users/ssledz/svn-repository/dspcommon/trunk/modules",
-              "svnCheckoutPath": "\\modules",
-              "buildXmlPath": "\\modules\\ant\\build-common.xml",
-              "tasks": []
-            }
+            "class": "pl.softech.gw.task.GwModuleStartTask"
           },
           "next": {
             "class": "pl.softech.gw.task.ChainTask",
             "task": {
-              "class": "pl.softech.gw.task.GwModuleStartTask"
+              "class": "pl.softech.gw.task.ExternalAntTask",
+              "target": "init-pc-data",
+              "module": {
+                "moduleName": "DSPCommon",
+                "svnPath": "file:///C:/Users/ssledz/svn-repository/dspcommon/trunk/modules",
+                "svnCheckoutPath": "\\modules",
+                "buildXmlPath": "\\modules\\ant\\build-common.xml",
+                "tasks": []
+              }
             },
             "next": {
               "class": "pl.softech.gw.task.AntTask",

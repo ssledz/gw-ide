@@ -47,6 +47,9 @@
           "next": {
             "class": "pl.softech.gw.task.ChainTask",
             "task": {
+              "class": "pl.softech.gw.task.GwModuleStartTask"
+            },
+            "next": {
               "class": "pl.softech.gw.task.ExternalAntTask",
               "target": "init-bc-data",
               "module": {
@@ -56,9 +59,6 @@
                 "buildXmlPath": "\\modules\\ant\\build-common.xml",
                 "tasks": []
               }
-            },
-            "next": {
-              "class": "pl.softech.gw.task.GwModuleStartTask"
             }
           }
         },
@@ -80,6 +80,9 @@
         "next": {
           "class": "pl.softech.gw.task.ChainTask",
           "task": {
+            "class": "pl.softech.gw.task.GwModuleStartTask"
+          },
+          "next": {
             "class": "pl.softech.gw.task.ExternalAntTask",
             "target": "init-pc-data",
             "module": {
@@ -89,9 +92,6 @@
               "buildXmlPath": "\\modules\\ant\\build-common.xml",
               "tasks": []
             }
-          },
-          "next": {
-            "class": "pl.softech.gw.task.GwModuleStartTask"
           }
         }
       },
