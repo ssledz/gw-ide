@@ -22,6 +22,9 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.PlainDocument;
 import org.apache.tools.ant.BuildEvent;
 import pl.softech.gw.ant.AntTaskExecutorFactory;
 import pl.softech.gw.ant.BuildListenerAdapter;
@@ -103,6 +106,7 @@ public class SimpleRunnerController {
     private ResourceDownloader downloadTool;
     private Unzip unzipTool;
     private AntTaskExecutorFactory antToolFactory;
+    private int maxLineCount = 1000;
 
     public SimpleRunnerController(SimpleRunnerView view, JFrame frame) {
         this.view = view;
@@ -119,7 +123,7 @@ public class SimpleRunnerController {
     private void println(final String message) {
         println(message, Color.BLACK);
     }
-    
+
     private void println(final String message, final Color color) {
 
         SwingUtilities.invokeLater(new Runnable() {
@@ -159,6 +163,18 @@ public class SimpleRunnerController {
         }));
 
         initTools();
+
+        view.getMessageTextArea().setDocument(new PlainDocument() {
+            @Override
+            public void insertString(int offs, String str, AttributeSet a) throws BadLocationException {
+                super.insertString(offs, str, a);
+                JTextArea area = view.getMessageTextArea();
+                if (area.getLineCount() > maxLineCount) {
+                    int endoffset = area.getLineEndOffset((int) (area.getLineCount() - maxLineCount - 1));
+                    remove(0, endoffset);
+                }
+            }
+        });
 
         view.getProjectDescriptorTextField().addMouseListener(new MouseAdapter() {
             @Override
@@ -335,7 +351,7 @@ public class SimpleRunnerController {
                 if (event instanceof SvnUpdateCompletedEvent) {
                     println("Svn task comleted");
                 }
-                
+
                 if (event instanceof SvnAuthenticationRequestEvent) {
 
                     String userName = JOptionPane.showInputDialog(frame, "Nazwa użytkownika", "Autoryzacja Svn", JOptionPane.QUESTION_MESSAGE);
