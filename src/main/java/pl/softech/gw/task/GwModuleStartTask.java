@@ -23,14 +23,16 @@ public class GwModuleStartTask implements ITask {
 
         private final Pattern OnSuccess = Pattern.compile(".*Started WebApplicationContext\\[/(?:ab|bc|pc).+");
         private final Pattern[] onFailure = {
-            Pattern.compile(".*drop db.*")
+            Pattern.compile(".*ERROR.*ContactManager\\s+unable to start.*"),
+            Pattern.compile(".*ERROR.*BillingCenter\\s+unable to start.*"),
+            Pattern.compile(".*ERROR.*PolicyCenter\\s+unable to start.*"),
+            Pattern.compile(".*Decreased runlevel to 'SHUTDOWN'.*"),
         };
 
         @Override
         public void messageLogged(BuildEvent event) {
             Matcher m = OnSuccess.matcher(event.getMessage());
             if (m.matches()) {
-//                isStarted = true;
                 removeBlockade();
             }
 
@@ -48,7 +50,6 @@ public class GwModuleStartTask implements ITask {
     @JsonExclude
     private final AntTaskExecutorFactory antTaskExecutorFactory;
     private RuntimeException exception;
-//    private boolean isStarted = false;
 
     public GwModuleStartTask(AntTaskExecutorFactory antTaskExecutorFactory) {
         this.antTaskExecutorFactory = antTaskExecutorFactory;
@@ -90,14 +91,6 @@ public class GwModuleStartTask implements ITask {
             }
         }
 
-//        while (!th.isInterrupted() && !isStarted && exception != null) {
-//            try {
-//                Thread.sleep(1000);
-//            } catch (InterruptedException ex) {
-//                Thread.currentThread().interrupt();
-//            }
-//        }
-
         antTaskExecutorFactory.removeBuildListener(l);
 
         if (exception != null) {
@@ -106,9 +99,4 @@ public class GwModuleStartTask implements ITask {
 
     }
 
-    public static void main(String[] args) {
-        String line = "2013-03-03 19:33:58,320 INFO  org.mortbay.util.Container Started WebApplicationContext[/bc,BillingCenter]";
-        Pattern pattern = Pattern.compile(".*Started WebApplicationContext\\[/(?:ab|bc|pc).+");
-        System.out.println(pattern.matcher(line).matches());
-    }
 }
