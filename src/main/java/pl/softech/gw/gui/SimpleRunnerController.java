@@ -34,6 +34,7 @@ import pl.softech.gw.pmodule.ProjectModule;
 import pl.softech.gw.svn.ISvnActionListener;
 import pl.softech.gw.svn.ISvnEvent;
 import pl.softech.gw.svn.SvnAddEvent;
+import pl.softech.gw.svn.SvnAuthenticationRequestEvent;
 import pl.softech.gw.svn.SvnTool;
 import pl.softech.gw.svn.SvnUpdateCompletedEvent;
 import pl.softech.gw.svn.SvnUpdateEvent;
@@ -333,6 +334,17 @@ public class SimpleRunnerController {
 
                 if (event instanceof SvnUpdateCompletedEvent) {
                     println("Svn task comleted");
+                }
+                
+                if (event instanceof SvnAuthenticationRequestEvent) {
+
+                    String userName = JOptionPane.showInputDialog(frame, "Nazwa użytkownika", "Autoryzacja Svn", JOptionPane.QUESTION_MESSAGE);
+                    String password = JPasswordOptionPane.showInputDialog(frame, "Hasło", "Autoryzacja Svn", JOptionPane.QUESTION_MESSAGE);
+
+                    SvnAuthenticationRequestEvent are = (SvnAuthenticationRequestEvent) event;
+                    are.setPassword(password);
+                    are.setUsername(userName);
+
                 }
             }
         });

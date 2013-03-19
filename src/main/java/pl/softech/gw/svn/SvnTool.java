@@ -5,8 +5,14 @@ import java.util.LinkedList;
 import java.util.List;
 import org.tmatesoft.svn.core.SVNCancelException;
 import org.tmatesoft.svn.core.SVNDepth;
+import org.tmatesoft.svn.core.SVNErrorMessage;
 import org.tmatesoft.svn.core.SVNException;
 import org.tmatesoft.svn.core.SVNURL;
+import org.tmatesoft.svn.core.auth.ISVNAuthenticationManager;
+import org.tmatesoft.svn.core.auth.ISVNAuthenticationProvider;
+import org.tmatesoft.svn.core.auth.SVNAuthentication;
+import org.tmatesoft.svn.core.auth.SVNPasswordAuthentication;
+import org.tmatesoft.svn.core.auth.SVNSSHAuthentication;
 import org.tmatesoft.svn.core.internal.io.fs.FSRepositoryFactory;
 import org.tmatesoft.svn.core.internal.io.svn.SVNRepositoryFactoryImpl;
 import org.tmatesoft.svn.core.wc.ISVNEventHandler;
@@ -15,6 +21,7 @@ import org.tmatesoft.svn.core.wc.SVNEvent;
 import org.tmatesoft.svn.core.wc.SVNEventAction;
 import org.tmatesoft.svn.core.wc.SVNRevision;
 import org.tmatesoft.svn.core.wc.SVNUpdateClient;
+import org.tmatesoft.svn.core.wc.SVNWCUtil;
 
 /**
  *
@@ -32,9 +39,9 @@ public class SvnTool {
                 fireEvent(new SvnAddEvent(event.getFile()));
             } else if (event.getAction() == SVNEventAction.UPDATE_COMPLETED) {
                 fireEvent(new SvnUpdateCompletedEvent());
-            } else if(event.getAction() == SVNEventAction.UPDATE_DELETE) {
+            } else if (event.getAction() == SVNEventAction.UPDATE_DELETE) {
                 fireEvent(new SvnDeleteEvent(event.getFile()));
-            } 
+            }
         }
 
         @Override
@@ -52,6 +59,42 @@ public class SvnTool {
         svn = SVNClientManager.newInstance();
         svnEventHandlerImpl = new SVNEventHandlerImpl();
         svn.setEventHandler(svnEventHandlerImpl);
+
+        initAuthenticationProvider();
+    }
+
+    private void initAuthenticationProvider() {
+
+        ISVNAuthenticationManager manager = SVNWCUtil.createDefaultAuthenticationManager();
+
+        manager.setAuthenticationProvider(new ISVNAuthenticationProvider() {
+            String userName;
+            String password;
+
+            @Override
+            public SVNAuthentication requestClientAuthentication(String kind, SVNURL url, String realm, SVNErrorMessage errorMessage, SVNAuthentication previousAuth, boolean authMayBeStored) {
+
+                if (userName == null || password == null) {
+                    SvnAuthenticationRequestEvent e = new SvnAuthenticationRequestEvent();
+                    fireEvent(e);
+                    userName = e.getUsername();
+                    password = e.getPassword();
+                }
+
+                if ("svn.ssh".equals(kind)) {
+                    return new SVNSSHAuthentication(userName, password, 22, true, url, false);
+                }
+
+                return new SVNPasswordAuthentication(userName, password, true, url, false);
+            }
+
+            @Override
+            public int acceptServerAuthentication(SVNURL url, String realm, Object certificate, boolean resultMayBeStored) {
+                return ISVNAuthenticationProvider.ACCEPTED;
+            }
+        });
+
+        svn.setAuthenticationManager(manager);
     }
 
     private void fireEvent(ISvnEvent event) {
