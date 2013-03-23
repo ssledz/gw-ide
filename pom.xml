@@ -3,11 +3,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>pl.softech.gw</groupId>
-    <artifactId>PcIde</artifactId>
+    <artifactId>gw-project-runner</artifactId>
     <version>1.0</version>
     <packaging>jar</packaging>
 
-    <name>PcIde</name>
+    <name>gw-project-runner</name>
     <url>http://maven.apache.org</url>
 
     <properties>

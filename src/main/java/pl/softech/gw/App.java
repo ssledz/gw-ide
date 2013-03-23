@@ -1,8 +1,21 @@
+/*
+ * Copyright 2013 Sławomir Śledź <slawomir.sledz@sof-tech.pl>.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package pl.softech.gw;
 
 import com.google.gson.Gson;
-import pl.softech.gw.pmodule.ProjectModule;
-import pl.softech.gw.zip.Unzip;
 import java.io.File;
 import org.apache.tools.ant.BuildEvent;
 import pl.softech.gw.ant.AntTaskExecutorFactory;
@@ -12,21 +25,24 @@ import pl.softech.gw.download.IDownloadActionListener;
 import pl.softech.gw.download.IDownloadEvent;
 import pl.softech.gw.download.ResourceDownloader;
 import pl.softech.gw.json.GsonFactory;
+import pl.softech.gw.pmodule.ProjectModule;
 import pl.softech.gw.svn.ISvnActionListener;
 import pl.softech.gw.svn.ISvnEvent;
-import pl.softech.gw.svn.SvnTool;
 import pl.softech.gw.svn.SvnAddEvent;
+import pl.softech.gw.svn.SvnTool;
 import pl.softech.gw.svn.SvnUpdateCompletedEvent;
 import pl.softech.gw.svn.SvnUpdateEvent;
 import pl.softech.gw.task.ChainTask;
 import pl.softech.gw.task.TaskFactory;
 import pl.softech.gw.zip.IZipActionListener;
 import pl.softech.gw.zip.IZipEvent;
+import pl.softech.gw.zip.Unzip;
 import pl.softech.gw.zip.UnzipPathEvent;
 
 /**
- * Hello world!
  *
+ * @author Sławomir Śledź <slawomir.sledz@sof-tech.pl>
+ * @since 1.0
  */
 public class App {
 
