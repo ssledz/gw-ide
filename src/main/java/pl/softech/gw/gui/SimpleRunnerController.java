@@ -37,6 +37,7 @@ import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.PlainDocument;
 import org.apache.tools.ant.BuildEvent;
+import pl.softech.gw.PlaceHolderFilter;
 import pl.softech.gw.ant.AntTaskExecutorFactory;
 import pl.softech.gw.ant.BuildListenerAdapter;
 import pl.softech.gw.download.BytesReceivedEvent;
@@ -112,6 +113,7 @@ public class SimpleRunnerController {
             }
         }
     }
+    private static final String PLACE_HOLDER_PROPS_FILE_NAME = ".place-holders.props";
     private final JFrame frame;
     private final SimpleRunnerView view;
     private SvnTool svnTool;
@@ -267,7 +269,9 @@ public class SimpleRunnerController {
                     public void run() {
 
                         try {
-                            ProjectModule pm = gson.fromJson(new FileReader(projectDescriptor), ProjectModule.class);
+                            ProjectModule pm = gson.fromJson(
+                                    new PlaceHolderFilter(new File(PLACE_HOLDER_PROPS_FILE_NAME)).read().filter(new FileReader(projectDescriptor)),
+                                    ProjectModule.class);
                             pm.setProjectDir(projectDir);
                             executeProjectModule(true);
                             pm.execute();

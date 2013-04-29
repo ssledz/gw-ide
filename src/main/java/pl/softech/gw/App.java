@@ -131,10 +131,10 @@ public class App {
 
         module.setProjectDir(projectDir);
         module.setModuleName("ContactManager");
-        module.setSvnCheckoutPath("\\modules\\configuration");
-        module.setModuleDownloadUrl("http://localhost:8080/pc-repository/ContactManager7.0.3.zip");
-        module.setSvnPath("file:///C:/Users/ssledz/svn-repository/cm/trunk/modules/configuration");
-        module.setBuildXmlPath("\\modules\\ant\\build.xml");
+        module.setSvnCheckoutPath("${ContactManager.svnCheckoutPath}");
+        module.setModuleDownloadUrl("${ContactManager.moduleDownloadUrl}");
+        module.setSvnPath("${ContactManager.svnPath}");
+        module.setBuildXmlPath("${ContactManager.buildXmlPath}");
         module.addTask(new ChainTask(taskFactory.createDownloadModuleTask(),
                 new ChainTask(taskFactory.createUnzipTask(), taskFactory.createCheckoutTask(), null), null));
 
@@ -143,10 +143,12 @@ public class App {
         parent = module;
         module.setProjectDir(projectDir);
         module.setModuleName("BillingCenter");
-        module.setSvnCheckoutPath("\\modules\\configuration");
-        module.setModuleDownloadUrl("http://localhost:8080/pc-repository/BillingCenter7.0.2_patch_1_2.zip");
-        module.setSvnPath("file:///C:/Users/ssledz/svn-repository/bc/trunk/modules/configuration");
-        module.setBuildXmlPath("\\modules\\ant\\build.xml");
+
+        module.setSvnCheckoutPath("${BillingCenter.svnCheckoutPath}");
+        module.setModuleDownloadUrl("${BillingCenter.moduleDownloadUrl}");
+        module.setSvnPath("${BillingCenter.svnPath}");
+        module.setBuildXmlPath("${BillingCenter.buildXmlPath}");
+
         module.addTask(new ChainTask(taskFactory.createDownloadModuleTask(),
                 new ChainTask(taskFactory.createUnzipTask(), taskFactory.createCheckoutTask(), null), null));
 
@@ -155,10 +157,12 @@ public class App {
         parent = module;
         module.setProjectDir(projectDir);
         module.setModuleName("PolicyCenter");
-        module.setSvnCheckoutPath("\\modules\\configuration");
-        module.setModuleDownloadUrl("http://localhost:8080/pc-repository/PolicyCenter7.0.6.zip");
-        module.setSvnPath("file:///C:/Users/ssledz/svn-repository/pc/trunk/modules/configuration");
-        module.setBuildXmlPath("\\modules\\ant\\build.xml");
+
+        module.setSvnCheckoutPath("${PolicyCenter.svnCheckoutPath}");
+        module.setModuleDownloadUrl("${PolicyCenter.moduleDownloadUrl}");
+        module.setSvnPath("${PolicyCenter.svnPath}");
+        module.setBuildXmlPath("${PolicyCenter.buildXmlPath}");
+
         module.addTask(new ChainTask(taskFactory.createDownloadModuleTask(),
                 new ChainTask(taskFactory.createUnzipTask(), taskFactory.createCheckoutTask(), null), null));
 
@@ -168,14 +172,29 @@ public class App {
         parent = module;
         module.setProjectDir(projectDir);
         module.setModuleName("DSPCommon");
-        module.setSvnCheckoutPath("\\modules");
-        module.setSvnPath("file:///C:/Users/ssledz/svn-repository/dspcommon/trunk/modules");
-        module.setBuildXmlPath("\\modules\\ant\\build-common.xml");
+
+        module.setSvnCheckoutPath("${DSPCommon.svnCheckoutPath}");
+        module.setSvnPath("${DSPCommon.svnPath}");
+        module.setBuildXmlPath("${DSPCommon.buildXmlPath}");
 
         module.addTask(
                 new ChainTask(taskFactory.createCheckoutTask(),
                 new ChainTask(taskFactory.createAntTask("push-common-into-products"), taskFactory.createAntTask("init-products-data"), null),
                 null));
+
+
+        module = new ProjectModule();
+        module.setParent(parent);
+        parent = module;
+        module.setProjectDir(projectDir);
+        module.setModuleName("Tools");
+
+        module.setSvnCheckoutPath("${Tools.svnCheckoutPath}");
+        module.setSvnPath("${Tools.svnPath}");
+        module.setBuildXmlPath("${Tools.buildXmlPath}");
+
+        module.addTask(taskFactory.createCheckoutTask());
+
 
         GsonFactory gsonFactory = new GsonFactory(taskFactory);
         Gson gson = gsonFactory.create();
@@ -183,6 +202,9 @@ public class App {
         String ret = gson.toJson(module);
         ProjectModule pm = gson.fromJson(ret, ProjectModule.class);
         System.out.println(gson.toJson(pm));
+        File placeHoldersFileName = new File(App.class.getClassLoader().getResource("place-holders.prop").getFile());
+
+        System.out.println(new PlaceHolderFilter(placeHoldersFileName).read().filter(gson.toJson(pm)));
 
         pm.setProjectDir(projectDir);
 //        pm.execute();
@@ -199,10 +221,12 @@ public class App {
 
         module.setProjectDir(projectDir);
         module.setModuleName("ContactManager");
-        module.setSvnCheckoutPath("\\modules\\configuration");
-        module.setModuleDownloadUrl("http://localhost:8080/pc-repository/ContactManager7.0.3.zip");
-        module.setSvnPath("file:///C:/Users/ssledz/svn-repository/cm/trunk/modules/configuration");
-        module.setBuildXmlPath("\\modules\\ant\\build.xml");
+
+        module.setSvnCheckoutPath("${ContactManager.svnCheckoutPath}");
+        module.setModuleDownloadUrl("${ContactManager.moduleDownloadUrl}");
+        module.setSvnPath("${ContactManager.svnPath}");
+        module.setBuildXmlPath("${ContactManager.buildXmlPath}");
+
         module.addTask(taskFactory.createUpdateTask());
 
         module = new ProjectModule();
@@ -210,10 +234,13 @@ public class App {
         parent = module;
         module.setProjectDir(projectDir);
         module.setModuleName("BillingCenter");
-        module.setSvnCheckoutPath("\\modules\\configuration");
-        module.setModuleDownloadUrl("http://localhost:8080/pc-repository/BillingCenter7.0.2_patch_1_2.zip");
-        module.setSvnPath("file:///C:/Users/ssledz/svn-repository/bc/trunk/modules/configuration");
-        module.setBuildXmlPath("\\modules\\ant\\build.xml");
+
+
+        module.setSvnCheckoutPath("${BillingCenter.svnCheckoutPath}");
+        module.setModuleDownloadUrl("${BillingCenter.moduleDownloadUrl}");
+        module.setSvnPath("${BillingCenter.svnPath}");
+        module.setBuildXmlPath("${BillingCenter.buildXmlPath}");
+
         module.addTask(taskFactory.createUpdateTask());
 
         module = new ProjectModule();
@@ -221,21 +248,35 @@ public class App {
         parent = module;
         module.setProjectDir(projectDir);
         module.setModuleName("PolicyCenter");
-        module.setSvnCheckoutPath("\\modules\\configuration");
-        module.setModuleDownloadUrl("http://localhost:8080/pc-repository/PolicyCenter7.0.6.zip");
-        module.setSvnPath("file:///C:/Users/ssledz/svn-repository/pc/trunk/modules/configuration");
-        module.setBuildXmlPath("\\modules\\ant\\build.xml");
+
+        module.setSvnCheckoutPath("${PolicyCenter.svnCheckoutPath}");
+        module.setModuleDownloadUrl("${PolicyCenter.moduleDownloadUrl}");
+        module.setSvnPath("${PolicyCenter.svnPath}");
+        module.setBuildXmlPath("${PolicyCenter.buildXmlPath}");
+
         module.addTask(taskFactory.createUpdateTask());
 
+        module = new ProjectModule();
+        module.setParent(parent);
+        parent = module;
+        module.setProjectDir(projectDir);
+        module.setModuleName("Tools");
+
+        module.setSvnCheckoutPath("${Tools.svnCheckoutPath}");
+        module.setSvnPath("${Tools.svnPath}");
+        module.setBuildXmlPath("${Tools.buildXmlPath}");
+
+        module.addTask(taskFactory.createUpdateTask());
 
         module = new ProjectModule();
         module.setParent(parent);
         parent = module;
         module.setProjectDir(projectDir);
         module.setModuleName("DSPCommon");
-        module.setSvnCheckoutPath("\\modules");
-        module.setSvnPath("file:///C:/Users/ssledz/svn-repository/dspcommon/trunk/modules");
-        module.setBuildXmlPath("\\modules\\ant\\build-common.xml");
+
+        module.setSvnCheckoutPath("${DSPCommon.svnCheckoutPath}");
+        module.setSvnPath("${DSPCommon.svnPath}");
+        module.setBuildXmlPath("${DSPCommon.buildXmlPath}");
 
         module.addTask(new ChainTask(taskFactory.createUpdateTask(), taskFactory.createAntTask("push-common-into-products"), null));
 
@@ -260,20 +301,21 @@ public class App {
         ProjectModule dspCommon = new ProjectModule();
         dspCommon.setProjectDir(projectDir);
         dspCommon.setModuleName("DSPCommon");
-        dspCommon.setSvnCheckoutPath("\\modules");
-        dspCommon.setSvnPath("file:///C:/Users/ssledz/svn-repository/dspcommon/trunk/modules");
-        dspCommon.setBuildXmlPath("\\modules\\ant\\build-common.xml");
 
+        dspCommon.setSvnCheckoutPath("${DSPCommon.svnCheckoutPath}");
+        dspCommon.setSvnPath("${DSPCommon.svnPath}");
+        dspCommon.setBuildXmlPath("${DSPCommon.buildXmlPath}");
 
         ProjectModule module = new ProjectModule();
         ProjectModule parent = module;
 
         module.setProjectDir(projectDir);
         module.setModuleName("ContactManager");
-        module.setSvnCheckoutPath("\\modules\\configuration");
-        module.setModuleDownloadUrl("http://localhost:8080/pc-repository/ContactManager7.0.3.zip");
-        module.setSvnPath("file:///C:/Users/ssledz/svn-repository/cm/trunk/modules/configuration");
-        module.setBuildXmlPath("\\modules\\ant\\build.xml");
+        module.setSvnCheckoutPath("${ContactManager.svnCheckoutPath}");
+        module.setModuleDownloadUrl("${ContactManager.moduleDownloadUrl}");
+        module.setSvnPath("${ContactManager.svnPath}");
+        module.setBuildXmlPath("${ContactManager.buildXmlPath}");
+
         module.addTask(new ChainTask(taskFactory.createGwModuleStartTask(),
                 new ChainTask(taskFactory.createAntTask("dev-dropdb"), taskFactory.createGwModuleStartTask(), null)));
 
@@ -282,10 +324,10 @@ public class App {
         parent = module;
         module.setProjectDir(projectDir);
         module.setModuleName("BillingCenter");
-        module.setSvnCheckoutPath("\\modules\\configuration");
-        module.setModuleDownloadUrl("http://localhost:8080/pc-repository/BillingCenter7.0.2_patch_1_2.zip");
-        module.setSvnPath("file:///C:/Users/ssledz/svn-repository/bc/trunk/modules/configuration");
-        module.setBuildXmlPath("\\modules\\ant\\build.xml");
+        module.setSvnCheckoutPath("${BillingCenter.svnCheckoutPath}");
+        module.setModuleDownloadUrl("${BillingCenter.moduleDownloadUrl}");
+        module.setSvnPath("${BillingCenter.svnPath}");
+        module.setBuildXmlPath("${BillingCenter.buildXmlPath}");
 
         module.addTask(new ChainTask(taskFactory.createGwModuleStartTask(),
                 new ChainTask(taskFactory.createAntTask("dev-dropdb"),
@@ -297,10 +339,10 @@ public class App {
         parent = module;
         module.setProjectDir(projectDir);
         module.setModuleName("PolicyCenter");
-        module.setSvnCheckoutPath("\\modules\\configuration");
-        module.setModuleDownloadUrl("http://localhost:8080/pc-repository/PolicyCenter7.0.6.zip");
-        module.setSvnPath("file:///C:/Users/ssledz/svn-repository/pc/trunk/modules/configuration");
-        module.setBuildXmlPath("\\modules\\ant\\build.xml");
+        module.setSvnCheckoutPath("${PolicyCenter.svnCheckoutPath}");
+        module.setModuleDownloadUrl("${PolicyCenter.moduleDownloadUrl}");
+        module.setSvnPath("${PolicyCenter.svnPath}");
+        module.setBuildXmlPath("${PolicyCenter.buildXmlPath}");
 
         module.addTask(new ChainTask(taskFactory.createGwModuleStartTask(),
                 new ChainTask(taskFactory.createAntTask("dev-dropdb"),
@@ -328,20 +370,20 @@ public class App {
         ProjectModule dspCommon = new ProjectModule();
         dspCommon.setProjectDir(projectDir);
         dspCommon.setModuleName("DSPCommon");
-        dspCommon.setSvnCheckoutPath("\\modules");
-        dspCommon.setSvnPath("file:///C:/Users/ssledz/svn-repository/dspcommon/trunk/modules");
-        dspCommon.setBuildXmlPath("\\modules\\ant\\build-common.xml");
-
+        dspCommon.setSvnCheckoutPath("${DSPCommon.svnCheckoutPath}");
+        dspCommon.setSvnPath("${DSPCommon.svnPath}");
+        dspCommon.setBuildXmlPath("${DSPCommon.buildXmlPath}");
 
         ProjectModule module = new ProjectModule();
         ProjectModule parent = module;
 
         module.setProjectDir(projectDir);
         module.setModuleName("ContactManager");
-        module.setSvnCheckoutPath("\\modules\\configuration");
-        module.setModuleDownloadUrl("http://localhost:8080/pc-repository/ContactManager7.0.3.zip");
-        module.setSvnPath("file:///C:/Users/ssledz/svn-repository/cm/trunk/modules/configuration");
-        module.setBuildXmlPath("\\modules\\ant\\build.xml");
+        module.setSvnCheckoutPath("${ContactManager.svnCheckoutPath}");
+        module.setModuleDownloadUrl("${ContactManager.moduleDownloadUrl}");
+        module.setSvnPath("${ContactManager.svnPath}");
+        module.setBuildXmlPath("${ContactManager.buildXmlPath}");
+
         module.addTask(new ChainTask(taskFactory.createGwModuleStartTask(),
                 new ChainTask(taskFactory.createAntTask("dev-dropdb"), taskFactory.createGwModuleStartTask(), null)));
 
@@ -350,10 +392,10 @@ public class App {
         parent = module;
         module.setProjectDir(projectDir);
         module.setModuleName("BillingCenter");
-        module.setSvnCheckoutPath("\\modules\\configuration");
-        module.setModuleDownloadUrl("http://localhost:8080/pc-repository/BillingCenter7.0.2_patch_1_2.zip");
-        module.setSvnPath("file:///C:/Users/ssledz/svn-repository/bc/trunk/modules/configuration");
-        module.setBuildXmlPath("\\modules\\ant\\build.xml");
+        module.setSvnCheckoutPath("${BillingCenter.svnCheckoutPath}");
+        module.setModuleDownloadUrl("${BillingCenter.moduleDownloadUrl}");
+        module.setSvnPath("${BillingCenter.svnPath}");
+        module.setBuildXmlPath("${BillingCenter.buildXmlPath}");
 
         module.addTask(new ChainTask(taskFactory.createGwModuleStartTask(),
                 new ChainTask(taskFactory.createAntTask("dev-dropdb"),
@@ -365,10 +407,10 @@ public class App {
         parent = module;
         module.setProjectDir(projectDir);
         module.setModuleName("PolicyCenter");
-        module.setSvnCheckoutPath("\\modules\\configuration");
-        module.setModuleDownloadUrl("http://localhost:8080/pc-repository/PolicyCenter7.0.6.zip");
-        module.setSvnPath("file:///C:/Users/ssledz/svn-repository/pc/trunk/modules/configuration");
-        module.setBuildXmlPath("\\modules\\ant\\build.xml");
+        module.setSvnCheckoutPath("${PolicyCenter.svnCheckoutPath}");
+        module.setModuleDownloadUrl("${PolicyCenter.moduleDownloadUrl}");
+        module.setSvnPath("${PolicyCenter.svnPath}");
+        module.setBuildXmlPath("${PolicyCenter.buildXmlPath}");
 
         module.addTask(new ChainTask(taskFactory.createGwModuleStartTask(), taskFactory.createAntTask("studio-debug-socket"),
                 new ChainTask(taskFactory.createAntTask("dev-dropdb"),
@@ -398,9 +440,9 @@ public class App {
         ProjectModule dspCommon = new ProjectModule();
         dspCommon.setProjectDir(projectDir);
         dspCommon.setModuleName("DSPCommon");
-        dspCommon.setSvnCheckoutPath("\\modules");
-        dspCommon.setSvnPath("file:///C:/Users/ssledz/svn-repository/dspcommon/trunk/modules");
-        dspCommon.setBuildXmlPath("\\modules\\ant\\build-common.xml");
+        dspCommon.setSvnCheckoutPath("${DSPCommon.svnCheckoutPath}");
+        dspCommon.setSvnPath("${DSPCommon.svnPath}");
+        dspCommon.setBuildXmlPath("${DSPCommon.buildXmlPath}");
 
 
         ProjectModule module = new ProjectModule();
@@ -408,10 +450,10 @@ public class App {
 
         module.setProjectDir(projectDir);
         module.setModuleName("ContactManager");
-        module.setSvnCheckoutPath("\\modules\\configuration");
-        module.setModuleDownloadUrl("http://localhost:8080/pc-repository/ContactManager7.0.3.zip");
-        module.setSvnPath("file:///C:/Users/ssledz/svn-repository/cm/trunk/modules/configuration");
-        module.setBuildXmlPath("\\modules\\ant\\build.xml");
+        module.setSvnCheckoutPath("${ContactManager.svnCheckoutPath}");
+        module.setModuleDownloadUrl("${ContactManager.moduleDownloadUrl}");
+        module.setSvnPath("${ContactManager.svnPath}");
+        module.setBuildXmlPath("${ContactManager.buildXmlPath}");
 
         module.addTask(new ChainTask(taskFactory.createAntTask("dev-dropdb"), taskFactory.createGwModuleStartTask(), null));
 
@@ -420,10 +462,10 @@ public class App {
         parent = module;
         module.setProjectDir(projectDir);
         module.setModuleName("BillingCenter");
-        module.setSvnCheckoutPath("\\modules\\configuration");
-        module.setModuleDownloadUrl("http://localhost:8080/pc-repository/BillingCenter7.0.2_patch_1_2.zip");
-        module.setSvnPath("file:///C:/Users/ssledz/svn-repository/bc/trunk/modules/configuration");
-        module.setBuildXmlPath("\\modules\\ant\\build.xml");
+        module.setSvnCheckoutPath("${BillingCenter.svnCheckoutPath}");
+        module.setModuleDownloadUrl("${BillingCenter.moduleDownloadUrl}");
+        module.setSvnPath("${BillingCenter.svnPath}");
+        module.setBuildXmlPath("${BillingCenter.buildXmlPath}");
 
         module.addTask(new ChainTask(taskFactory.createAntTask("dev-dropdb"),
                 new ChainTask(taskFactory.createGwModuleStartTask(), taskFactory.createExternalAntTask("init-bc-data", dspCommon), null), null));
@@ -433,10 +475,10 @@ public class App {
         parent = module;
         module.setProjectDir(projectDir);
         module.setModuleName("PolicyCenter");
-        module.setSvnCheckoutPath("\\modules\\configuration");
-        module.setModuleDownloadUrl("http://localhost:8080/pc-repository/PolicyCenter7.0.6.zip");
-        module.setSvnPath("file:///C:/Users/ssledz/svn-repository/pc/trunk/modules/configuration");
-        module.setBuildXmlPath("\\modules\\ant\\build.xml");
+        module.setSvnCheckoutPath("${PolicyCenter.svnCheckoutPath}");
+        module.setModuleDownloadUrl("${PolicyCenter.moduleDownloadUrl}");
+        module.setSvnPath("${PolicyCenter.svnPath}");
+        module.setBuildXmlPath("${PolicyCenter.buildXmlPath}");
 
         module.addTask(new ChainTask(taskFactory.createAntTask("dev-dropdb"),
                 new ChainTask(taskFactory.createGwModuleStartTask(), taskFactory.createExternalAntTask("init-pc-data", dspCommon), null), null));
@@ -461,9 +503,9 @@ public class App {
         ProjectModule dspCommon = new ProjectModule();
         dspCommon.setProjectDir(projectDir);
         dspCommon.setModuleName("DSPCommon");
-        dspCommon.setSvnCheckoutPath("\\modules");
-        dspCommon.setSvnPath("file:///C:/Users/ssledz/svn-repository/dspcommon/trunk/modules");
-        dspCommon.setBuildXmlPath("\\modules\\ant\\build-common.xml");
+        dspCommon.setSvnCheckoutPath("${DSPCommon.svnCheckoutPath}");
+        dspCommon.setSvnPath("${DSPCommon.svnPath}");
+        dspCommon.setBuildXmlPath("${DSPCommon.buildXmlPath}");
 
 
         ProjectModule module = new ProjectModule();
@@ -471,10 +513,10 @@ public class App {
 
         module.setProjectDir(projectDir);
         module.setModuleName("ContactManager");
-        module.setSvnCheckoutPath("\\modules\\configuration");
-        module.setModuleDownloadUrl("http://localhost:8080/pc-repository/ContactManager7.0.3.zip");
-        module.setSvnPath("file:///C:/Users/ssledz/svn-repository/cm/trunk/modules/configuration");
-        module.setBuildXmlPath("\\modules\\ant\\build.xml");
+        module.setSvnCheckoutPath("${ContactManager.svnCheckoutPath}");
+        module.setModuleDownloadUrl("${ContactManager.moduleDownloadUrl}");
+        module.setSvnPath("${ContactManager.svnPath}");
+        module.setBuildXmlPath("${ContactManager.buildXmlPath}");
 
         module.addTask(new ChainTask(taskFactory.createAntTask("dev-dropdb"), taskFactory.createGwModuleStartTask(), null));
 
@@ -483,10 +525,10 @@ public class App {
         parent = module;
         module.setProjectDir(projectDir);
         module.setModuleName("BillingCenter");
-        module.setSvnCheckoutPath("\\modules\\configuration");
-        module.setModuleDownloadUrl("http://localhost:8080/pc-repository/BillingCenter7.0.2_patch_1_2.zip");
-        module.setSvnPath("file:///C:/Users/ssledz/svn-repository/bc/trunk/modules/configuration");
-        module.setBuildXmlPath("\\modules\\ant\\build.xml");
+        module.setSvnCheckoutPath("${BillingCenter.svnCheckoutPath}");
+        module.setModuleDownloadUrl("${BillingCenter.moduleDownloadUrl}");
+        module.setSvnPath("${BillingCenter.svnPath}");
+        module.setBuildXmlPath("${BillingCenter.buildXmlPath}");
 
         module.addTask(new ChainTask(taskFactory.createAntTask("dev-dropdb"),
                 new ChainTask(taskFactory.createGwModuleStartTask(), taskFactory.createExternalAntTask("init-bc-data", dspCommon), null), null));
@@ -496,10 +538,10 @@ public class App {
         parent = module;
         module.setProjectDir(projectDir);
         module.setModuleName("PolicyCenter");
-        module.setSvnCheckoutPath("\\modules\\configuration");
-        module.setModuleDownloadUrl("http://localhost:8080/pc-repository/PolicyCenter7.0.6.zip");
-        module.setSvnPath("file:///C:/Users/ssledz/svn-repository/pc/trunk/modules/configuration");
-        module.setBuildXmlPath("\\modules\\ant\\build.xml");
+        module.setSvnCheckoutPath("${PolicyCenter.svnCheckoutPath}");
+        module.setModuleDownloadUrl("${PolicyCenter.moduleDownloadUrl}");
+        module.setSvnPath("${PolicyCenter.svnPath}");
+        module.setBuildXmlPath("${PolicyCenter.buildXmlPath}");
 
         module.addTask(new ChainTask(taskFactory.createAntTask("dev-dropdb"),
                 new ChainTask(taskFactory.createGwModuleStartTask(),
@@ -517,9 +559,11 @@ public class App {
     }
 
     public static void main(String[] args) throws Exception {
+        createProjectJob();
+//        updateProjectJob();
 //        dropAndRunProjectJob();
 //        runProjectJob();
 //        runProjectDevJob();
-        dropAndRunProjectDevJob();
+//        dropAndRunProjectDevJob();
     }
 }

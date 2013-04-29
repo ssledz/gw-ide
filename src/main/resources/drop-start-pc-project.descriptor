@@ -1,21 +1,21 @@
 {
   "moduleName": "PolicyCenter",
-  "svnPath": "file:///C:/Users/ssledz/svn-repository/pc/trunk/modules/configuration",
-  "svnCheckoutPath": "\\modules\\configuration",
-  "moduleDownloadUrl": "http://localhost:8080/pc-repository/PolicyCenter7.0.6.zip",
-  "buildXmlPath": "\\modules\\ant\\build.xml",
+  "svnPath": "${PolicyCenter.svnPath}",
+  "svnCheckoutPath": "${PolicyCenter.svnCheckoutPath}",
+  "moduleDownloadUrl": "${PolicyCenter.moduleDownloadUrl}",
+  "buildXmlPath": "${PolicyCenter.buildXmlPath}",
   "parent": {
     "moduleName": "BillingCenter",
-    "svnPath": "file:///C:/Users/ssledz/svn-repository/bc/trunk/modules/configuration",
-    "svnCheckoutPath": "\\modules\\configuration",
-    "moduleDownloadUrl": "http://localhost:8080/pc-repository/BillingCenter7.0.2_patch_1_2.zip",
-    "buildXmlPath": "\\modules\\ant\\build.xml",
+    "svnPath": "${BillingCenter.svnPath}",
+    "svnCheckoutPath": "${BillingCenter.svnCheckoutPath}",
+    "moduleDownloadUrl": "${BillingCenter.moduleDownloadUrl}",
+    "buildXmlPath": "${BillingCenter.buildXmlPath}",
     "parent": {
       "moduleName": "ContactManager",
-      "svnPath": "file:///C:/Users/ssledz/svn-repository/cm/trunk/modules/configuration",
-      "svnCheckoutPath": "\\modules\\configuration",
-      "moduleDownloadUrl": "http://localhost:8080/pc-repository/ContactManager7.0.3.zip",
-      "buildXmlPath": "\\modules\\ant\\build.xml",
+      "svnPath": "${ContactManager.svnPath}",
+      "svnCheckoutPath": "${ContactManager.svnCheckoutPath}",
+      "moduleDownloadUrl": "${ContactManager.moduleDownloadUrl}",
+      "buildXmlPath": "${ContactManager.buildXmlPath}",
       "tasks": [
         {
           "class": "pl.softech.gw.task.ChainTask",
@@ -46,9 +46,9 @@
             "target": "init-bc-data",
             "module": {
               "moduleName": "DSPCommon",
-              "svnPath": "file:///C:/Users/ssledz/svn-repository/dspcommon/trunk/modules",
-              "svnCheckoutPath": "\\modules",
-              "buildXmlPath": "\\modules\\ant\\build-common.xml",
+              "svnPath": "${DSPCommon.svnPath}",
+              "svnCheckoutPath": "${DSPCommon.svnCheckoutPath}",
+              "buildXmlPath": "${DSPCommon.buildXmlPath}",
               "tasks": []
             }
           }
@@ -73,9 +73,9 @@
           "target": "init-pc-data",
           "module": {
             "moduleName": "DSPCommon",
-            "svnPath": "file:///C:/Users/ssledz/svn-repository/dspcommon/trunk/modules",
-            "svnCheckoutPath": "\\modules",
-            "buildXmlPath": "\\modules\\ant\\build-common.xml",
+            "svnPath": "${DSPCommon.svnPath}",
+            "svnCheckoutPath": "${DSPCommon.svnCheckoutPath}",
+            "buildXmlPath": "${DSPCommon.buildXmlPath}",
             "tasks": []
           }
         }
