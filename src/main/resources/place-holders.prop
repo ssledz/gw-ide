@@ -3,20 +3,20 @@
 #Tools.buildXmlPath=
 
 DSPCommon.svnPath=file:///C:/Users/ssledz/svn-repository/dspcommon/trunk/modules
-DSPCommon.svnCheckoutPath=\\modules
-DSPCommon.buildXmlPath=\\modules\\ant\\build-common.xml
+DSPCommon.svnCheckoutPath=\\\\modules
+DSPCommon.buildXmlPath=\\\\modules\\\\ant\\\\build-common.xml
 
 PolicyCenter.svnPath=file:///C:/Users/ssledz/svn-repository/pc/trunk/modules/configuration
-PolicyCenter.svnCheckoutPath=\\modules\\configuration
-PolicyCenter.buildXmlPath=\\modules\\ant\\build.xml
+PolicyCenter.svnCheckoutPath=\\\\modules\\\\configuration
+PolicyCenter.buildXmlPath=\\\\modules\\\\ant\\\\build.xml
 PolicyCenter.moduleDownloadUrl=http://localhost/pc-repository/PolicyCenter7.0.6.zip
 
 BillingCenter.svnPath=file:///C:/Users/ssledz/svn-repository/bc/trunk/modules/configuration
-BillingCenter.svnCheckoutPath=\\modules\\configuration
-BillingCenter.buildXmlPath=\\modules\\ant\\build.xml
+BillingCenter.svnCheckoutPath=\\\\modules\\\\configuration
+BillingCenter.buildXmlPath=\\\\modules\\\\ant\\\\build.xml
 BillingCenter.moduleDownloadUrl=http://localhost/pc-repository/BillingCenter7.0.2_patch_1_2.zip
 
 ContactManager.svnPath=file:///C:/Users/ssledz/svn-repository/cm/trunk/modules/configuration
-ContactManager.svnCheckoutPath=\\modules\\configuration
-ContactManager.buildXmlPath=\\modules\\ant\\build.xml
+ContactManager.svnCheckoutPath=\\\\modules\\\\configuration
+ContactManager.buildXmlPath=\\\\modules\\\\ant\\\\build.xml
 ContactManager.moduleDownloadUrl=http://localhost/pc-repository/ContactManager7.0.3.zip

@@ -4,7 +4,7 @@
   "svnCheckoutPath": "${DSPCommon.svnCheckoutPath}",
   "buildXmlPath": "${DSPCommon.buildXmlPath}",
   "parent": {
-    "moduleName": "Tools",
+    "moduleName": "tools",
     "svnPath": "${Tools.svnPath}",
     "svnCheckoutPath": "${Tools.svnCheckoutPath}",
     "buildXmlPath": "${Tools.buildXmlPath}",

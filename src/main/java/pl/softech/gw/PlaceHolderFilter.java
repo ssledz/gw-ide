@@ -40,6 +40,7 @@ public class PlaceHolderFilter {
     public PlaceHolderFilter read() throws Exception {
 
         if (!file.exists()) {
+            System.out.println(file.getAbsoluteFile() + " doesn't exist");
             return this;
         }
 
@@ -85,9 +86,11 @@ public class PlaceHolderFilter {
     public String filter(String content) {
 
         for (Map.Entry<Object, Object> e : props.entrySet()) {
-            content = content.replaceAll(String.format("\\$\\{%s\\}", e.getKey()), e.getValue().toString());
+            content = content.replace(String.format("${%s}", e.getKey()), e.getValue().toString());
         }
 
+        System.out.println("DBG--->\n" + content + "\n<---DBG");
+        
         return content;
     }
 
@@ -98,7 +101,7 @@ public class PlaceHolderFilter {
 
         PlaceHolderFilter phf = new PlaceHolderFilter(null);
 
-        phf.props.put("Lord", "L O R D");
+        phf.props.put("Lord", "\\\\L\\O R D");
         phf.props.put("fantasy", "FANTASY");
 
         System.out.println(phf.filter(builder.toString()));
